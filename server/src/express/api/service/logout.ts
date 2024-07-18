@@ -1,5 +1,8 @@
 /**
  * 登出 API
+ * 
+ * 參數:
+ * 無參數, sessionId 處理
  */
 export const path = '/api/service/logout';
 export const method = 'POST';

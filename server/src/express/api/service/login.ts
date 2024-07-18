@@ -1,5 +1,9 @@
 /**
  * 登入 API
+ * 
+ * 參數:
+ * username (string)       帳號名稱 (最大 100 字)
+ * password (string)       密碼 (最大 100 字)
  */
 export const path = '/api/service/login';
 export const method = 'POST';
