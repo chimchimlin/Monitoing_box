@@ -4,7 +4,7 @@
   --vt-c-white-soft: #f8f8f8;
   --vt-c-white-mute: #f2f2f2;
 
-  --vt-c-black: #181818;
+  --vt-c-black: #1a1818;
   --vt-c-black-soft: #222222;
   --vt-c-black-mute: #282828;
 
@@ -65,7 +65,7 @@ body {
   transition:
     color 0.5s,
     background-color 0.5s;
-  line-height: 1.6;
+  line-height: 2.0;
   font-family:
     Inter,
     -apple-system,
