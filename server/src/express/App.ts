@@ -273,7 +273,6 @@ export class App extends EventEmitter implements AppEvents {
      */
     #handleRouteNotFoundError(req: Request, res: Response): void {
         res.json({
-            status: 404,
             loadType: LoadType.PATH_ERROR,
             data: []
         });
@@ -285,7 +284,6 @@ export class App extends EventEmitter implements AppEvents {
      */
     #handleServerError(res: Response, error: any): void {
         res.status(500).json({
-            status: 500,
             loadType: LoadType.SERVER_ERROR,
             error: error
         });
