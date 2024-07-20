@@ -51,7 +51,7 @@ export async function execute(req: Request, res: Response, config: ApiConfig, db
 
         // 檢查是否有重複 dev_addr
         while (isDuplicate) {
-            const checkQuery = `SELECT EXISTS (SELECT 1 FROM Sensor WHERE dev_addr = "${newSensor.dev_addr}") AS record_exists;`;
+            const checkQuery = `SELECT EXISTS (SELECT 1 FROM Sensor WHERE dev_addr = "${newSensor.dev_addr}" AND id != ${newSensor.sensor_id}) AS record_exists;`;
             const result = await db.query(checkQuery);
 
             if (result.length === 0 || Number((result[0] as any).record_exists) === 0) {
