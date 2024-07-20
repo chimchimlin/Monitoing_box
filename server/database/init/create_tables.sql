@@ -16,9 +16,10 @@ SET GLOBAL event_scheduler = ON;
 CREATE TABLE `Sensor` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `dev_addr` VARCHAR(16) NOT NULL,
-  `last_refresh` TIMESTAMP NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `gps_longitude` DECIMAL(11, 8),
   `gps_latitude` DECIMAL(10, 8),
+  `created_at` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+  `last_refresh` TIMESTAMP NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
@@ -35,7 +36,7 @@ CREATE TABLE `SensorData` (
   `gas_resistance` FLOAT DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `SensorData_FK` (`sensor_id`),
-  CONSTRAINT `SensorData_FK` FOREIGN KEY (`sensor_id`) REFERENCES `Sensor` (`id`)
+  CONSTRAINT `SensorData_FK` FOREIGN KEY (`sensor_id`) REFERENCES `Sensor` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 
