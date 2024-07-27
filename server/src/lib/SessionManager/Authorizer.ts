@@ -25,7 +25,7 @@ export class Authorizer {
      */
     public async login(username: string, password: string): Promise<UserData | false> {
         const hashPassword = this.#hash.generateHash(password);
-        const result = await this.#db.query(`SELECT id, user_permissions FROM User WHERE username = "${username}" AND password = "${hashPassword}" AND registered = 1;`);
+        const result = await this.#db.query(`SELECT id, user_permissions FROM User WHERE username = "${username}" AND password = "${hashPassword}";`);
         
         if (result.length === 0) {
             return false
@@ -42,7 +42,7 @@ export class Authorizer {
      */
     public async verifyLogin(username: string, password: string): Promise<boolean> {
         const hashPassword = this.#hash.generateHash(password);
-        const result = await this.#db.query(`SELECT COUNT(*) FROM User WHERE username = "${username}" AND password = "${hashPassword}" AND registered = 1;`);
+        const result = await this.#db.query(`SELECT COUNT(*) FROM User WHERE username = "${username}" AND password = "${hashPassword}";`);
 
         // result data: [ { 'COUNT(*)': 1n } ],  1n is BigInt
         const count = Number((result[0] as any)['COUNT(*)']);
