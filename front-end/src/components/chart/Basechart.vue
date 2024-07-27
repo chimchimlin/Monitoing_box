@@ -1,132 +1,144 @@
 <template>
-  <div class="chart-container">
-    <Line v-if="chartData" :data="chartData" :options="chartOptions" />
-  </div>
+    <div class="chart-container">
+        <Line v-if="chartData" :data="chartData" :options="chartOptions" />
+    </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, computed } from 'vue';
+import { defineComponent, computed } from 'vue';
 import { Line } from 'vue-chartjs';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
-import { Monitor } from '@/@types/SensorData.types';
-import { ChartOptions } from 'chart.js';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+} from 'chart.js';
+
+import type { PropType } from 'vue';
+import type { ChartOptions } from 'chart.js';
+import type { Monitor } from '@/@types/SensorData.types';
+
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 export default defineComponent({
-  components: { Line },
-  props: {
-    sensorData: {
-      type: Array as PropType<Monitor[]>,
-      required: true
-    },
-    label: {
-      type: String,
-      required: true
-    },
-    dataKey: {
-      type: String,
-      required: true
-    },
-    borderColor: {
-      type: String,
-      required: true
-    }
-  },
-  setup(props) {
-    // ¤ÏÂà¼Æ¾Ú¶¶§Ç
-    const reversedData = [...props.sensorData].reverse();
-
-    const chartData = computed(() => {
-      if (!props.sensorData.length) return null;
-
-      return {
-        labels: reversedData.map(data => {
-          const date = new Date(data.created_at);
-          return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); 
-          }),// 24¤p®É¨îÅã¥Ü ¥uÅã¥Ü®É¶¡¨S¦³¤é´Á
-        datasets: [
-          {
-            label: props.label,
-            data: reversedData.map(data => parseFloat(data[props.dataKey as keyof Monitor] as string)),
-            borderColor: props.borderColor,
-            tension: 0.5,
-            fill: true,
-            pointRadius: 5,
-            pointHoverRadius: 10,
-            pointBackgroundColor: props.borderColor,
-            pointBorderColor: '#fff',
-            pointBorderWidth: 3,
-
-          }
-        ]
-      };
-    });
-
-    const chartOptions: ChartOptions<'line'> = {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      },
-      plugins: {
-        //§ïÅã¥Ü¸Ô²Ó¼Æ­È
-    tooltip: {
-      backgroundColor: 'rgba(0,0,0,0.8)',
-      titleFont: {
-        size: 15,
-        weight: 'bold',
-      },
-      bodyFont: {
-        size: 14,
-      },
-      padding: 20,
-  
-      callbacks: {
-        title: function(tooltipItems) {
-          if (tooltipItems.length > 0) {
-            const dataIndex = tooltipItems[0].dataIndex;
-            const createdAt = new Date(reversedData[dataIndex].created_at);
-            return createdAt.toLocaleString('ja-JP', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit'
-            });
-          }
-          return '';
+    components: { Line },
+    props: {
+        sensorData: {
+            type: Array as PropType<Monitor[]>,
+            required: true
         },
-        label: function(context) {
-          let label = context.dataset.label || '';
-          if (label) {
-            label += ': ';
-          }
-          if (context.parsed.y !== null) {
-            label += new Intl.NumberFormat('en-US', { 
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2 
-            }).format(context.parsed.y);
-          }
-          return label;
+        label: {
+            type: String,
+            required: true
+        },
+        dataKey: {
+            type: String,
+            required: true
+        },
+        borderColor: {
+            type: String,
+            required: true
         }
-      }
+    },
+    setup(props) {
+        // åè½‰æ•¸æ“šé †åº
+        const reversedData = [...props.sensorData].reverse();
+
+        const chartData = computed(() => {
+            if (!props.sensorData.length) return null;
+
+            return {
+                labels: reversedData.map(data => {
+                    const date = new Date(data.created_at);
+                    return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+                }),// 24å°æ™‚åˆ¶é¡¯ç¤º åªé¡¯ç¤ºæ™‚é–“æ²’æœ‰æ—¥æœŸ
+                datasets: [
+                    {
+                        label: props.label,
+                        data: reversedData.map(data => parseFloat(data[props.dataKey as keyof Monitor] as string)),
+                        borderColor: props.borderColor,
+                        tension: 0.5,
+                        fill: true,
+                        pointRadius: 5,
+                        pointHoverRadius: 10,
+                        pointBackgroundColor: props.borderColor,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 3,
+
+                    }
+                ]
+            };
+        });
+
+        const chartOptions: ChartOptions<'line'> = {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                //æ”¹é¡¯ç¤ºè©³ç´°æ•¸å€¼
+                tooltip: {
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    titleFont: {
+                        size: 15,
+                        weight: 'bold',
+                    },
+                    bodyFont: {
+                        size: 14,
+                    },
+                    padding: 20,
+
+                    callbacks: {
+                        title: function (tooltipItems) {
+                            if (tooltipItems.length > 0) {
+                                const dataIndex = tooltipItems[0].dataIndex;
+                                const createdAt = new Date(reversedData[dataIndex].created_at);
+                                return createdAt.toLocaleString('ja-JP', {
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit'
+                                });
+                            }
+                            return '';
+                        },
+                        label: function (context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('en-US', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+
+        };
+
+        return { chartData, chartOptions };
     }
-  }
-
-    };
-
-    return { chartData, chartOptions };
-  }
 });
 </script>
 
 <style scoped>
 .chart-container {
-  height: 300px;
-  width: 500px;
+    height: 300px;
+    width: 500px;
 }
 </style>
