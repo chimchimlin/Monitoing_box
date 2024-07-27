@@ -3,12 +3,13 @@ import vue from '@vitejs/plugin-vue';
 import axios from 'axios';
 
 // https://vitejs.dev/config/
+//https://netlab.isu.edu.tw:59534/
 export default defineConfig({
     plugins: [vue()],
     server: {
         proxy: {
             '/api': {
-                target: 'https://netlab.isu.edu.tw:59534',
+                target: 'https://sensor-server.ggwp.tw/',
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/api/, '/api'),
                 //async onProxyReq(proxyReq) {

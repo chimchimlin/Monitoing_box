@@ -1,5 +1,5 @@
 export interface Monitor{
-    uuid?: number;
+    id?: number;
     temperature: string;         // 溫度
     humidity: string;       // 濕度
     pressure: string;      // 氣體

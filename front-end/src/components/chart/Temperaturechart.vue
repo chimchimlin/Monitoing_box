@@ -1,12 +1,12 @@
 <template>
-  <BaseChart :sensorData="sensorData" label="Gas_resistance" dataKey="gas_resistance" borderColor="rgb(70, 202, 235)" />
+  <BaseChart :sensorData="sensorData" label="Temperature" dataKey="temperature" borderColor="rgb(255, 162, 235)" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import type { PropType } from 'vue';
 import BaseChart from './Basechart.vue';
-import { Monitor } from '@/@types/Monitor.types';
+import { Monitor } from '@/@types/SensorData.types';
 
 export default defineComponent({
   components: { BaseChart},

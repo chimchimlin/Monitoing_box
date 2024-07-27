@@ -8,7 +8,7 @@
 import { defineComponent, PropType, computed } from 'vue';
 import { Line } from 'vue-chartjs';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
-import { Monitor } from '@/@types/Monitor.types';
+import { Monitor } from '@/@types/SensorData.types';
 import { ChartOptions } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
