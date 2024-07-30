@@ -1,4 +1,4 @@
-import { HashGenerator } from "../HashGenerator/HashGenerator.js";
+import { HashGenerator } from "../hash-generator/HashGenerator.js";
 import type { Database } from "../database/Maria.js";
 
 

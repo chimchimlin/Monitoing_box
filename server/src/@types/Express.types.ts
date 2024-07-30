@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 
 import type { Database } from '../lib/database/Maria.js';
-import type { SessionManager } from '../lib/SessionManager/SessionManager.js';
+import type { SessionManager } from '../lib/session-manager/SessionManager.js';
 
 import type { ApiConfig } from './Config.types.js';
 

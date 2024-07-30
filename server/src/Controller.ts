@@ -1,7 +1,7 @@
 import { App } from "./express/App.js";
-import { Authorizer } from "./lib/SessionManager/Authorizer.js";
+import { Authorizer } from "./lib/session-manager/Authorizer.js";
 import { Database } from "./lib/database/Maria.js";
-import { SessionManager } from "./lib/SessionManager/SessionManager.js";
+import { SessionManager } from "./lib/session-manager/SessionManager.js";
 import { loadEnviornment } from "./loader/loadEnviornment.js";
 
 import { config } from "../config.js";

@@ -9,7 +9,7 @@ import express, { Request, Response } from 'express';
 import { LoadType } from '../@types/Express.types.js';
 
 import type { Database } from '../lib/database/Maria.js';
-import type { SessionManager } from '../lib/SessionManager/SessionManager.js';
+import type { SessionManager } from '../lib/session-manager/SessionManager.js';
 import type { ApiConfig } from '../@types/Config.types.js';
 import type { EventListeners, Route, UserPermissions } from '../@types/Express.types.js';
 
