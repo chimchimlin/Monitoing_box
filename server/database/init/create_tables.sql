@@ -18,6 +18,7 @@ CREATE TABLE `Sensor` (
   `dev_addr` VARCHAR(16) NOT NULL,
   `gps_longitude` DECIMAL(11, 8),
   `gps_latitude` DECIMAL(10, 8),
+  `battery` INT DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
   `last_refresh` TIMESTAMP NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`)
