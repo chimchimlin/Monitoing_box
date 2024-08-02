@@ -11,12 +11,15 @@ export type Config = {
  * api 設置及開關
  * @property {string} host - host (應設置為 localhost)
  * @property {number} port - port
- * @property {Object} enableModule - 是否啟用子模塊
+ * @property {object} enableModule - 是否啟用子模塊
+ * @property {object} enableModule.mqtt - 是否啟用 MQTT client 接收 LoRaWAN gateway 資料
  */
 export type ApiConfig = {
     host: string;
     port: number;
-    enableModule: {}
+    enableModule: {
+        mqtt: boolean;
+    }
 }
 
 /**

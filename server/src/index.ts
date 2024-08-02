@@ -55,7 +55,12 @@ const color = {
 
 
 const main = async () => {
-    await controller.ininMQTT();
+    const sucess = await controller.ininMQTT();
+
+    if (!sucess) {
+        console.log(getFormatTime(), '[MQTT] MQTT client not enabled');
+    }
+
     await startApp();
 }
 

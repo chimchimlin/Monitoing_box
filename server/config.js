@@ -7,6 +7,7 @@
  * @property {string} apiConfig.host - api host
  * @property {number} apiConfig.port - api port
  * @property {object} apiConfig.enableModule - 是否啟用子模塊
+ * @property {object} apiConfig.enableModule.mqtt - 是否啟用 MQTT client 接收 LoRaWAN gateway 資料
  * 
  * @property {object} IPBlocker - IPBlocker config
  * @property {number} IPBlocker.retryLimit - 重試次數 (default: 5)
@@ -23,6 +24,7 @@ const config = {
         host: '0.0.0.0',
         port: 4000,
         enableModule: {
+            mqtt: true
         }
     },
     ipBlocker: {

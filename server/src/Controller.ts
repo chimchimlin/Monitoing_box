@@ -15,7 +15,7 @@ export class Controller {
     public app: App;
 
     #db: Database;
-    #mqtt: MQTT;
+    #mqtt: MQTT | null;
     #sessionManager: SessionManager;
 
 
@@ -25,7 +25,7 @@ export class Controller {
 
         this.#db = new Database(env.dbConfig);
         this.#sessionManager = new SessionManager(new Authorizer(env.salt, this.#db), this.#db, this.config.ipBlocker);
-        this.#mqtt = new MQTT(this.config.mqttConfig, this.#db);
+        this.#mqtt = this.config.apiConfig.enableModule.mqtt ? new MQTT(this.config.mqttConfig, this.#db) : null;
         this.app = new App(this.config.apiConfig, this.#db, this.#sessionManager);
     }
 
@@ -40,8 +40,14 @@ export class Controller {
 
     /**
      * 啟動 MQTT client
+     * @returns {Promise<boolean>} - true: 已啟用, false: 未啟用
      */
-    public async ininMQTT(): Promise<void> {
+    public async ininMQTT(): Promise<boolean> {
+        if (!this.#mqtt) {
+            return false;
+        }
+
         await this.#mqtt.start();
+        return true;
     }
 }
