@@ -41,6 +41,42 @@ CREATE TABLE `SensorData` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 
+DELIMITER //
+
+CREATE PROCEDURE AddSensorData(
+  IN mac_addr VARCHAR(16),
+  IN temperature FLOAT,
+  IN humidity FLOAT,
+  IN pressure FLOAT,
+  IN gas_resistance FLOAT,
+  IN battery INT
+)
+BEGIN
+  DECLARE sensor_id INT;
+
+  -- 獲取 sensor_id
+  SELECT id INTO sensor_id FROM Sensor WHERE dev_addr = mac_addr;
+
+  -- 插入 SensorData
+  INSERT INTO 
+    SensorData (sensor_id, temperature, humidity, pressure, gas_resistance)
+  VALUES 
+    (sensor_id, temperature, humidity, pressure, gas_resistance);
+
+  -- 刷新 Sensor 的 battery, last_refresh 值
+  UPDATE 
+    Sensor 
+  SET 
+    battery = battery, 
+    last_refresh = CURRENT_TIMESTAMP()
+  WHERE 
+    id = sensor_id;
+  
+END //
+
+DELIMITER ;
+
+
 -- sensor_DB.`User` definition
 
 CREATE TABLE `User` (

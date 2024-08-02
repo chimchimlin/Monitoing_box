@@ -9,7 +9,7 @@ import type { IPBlockerConfig } from '../../@types/Config.types.js';
 export interface SessionData {
     username: string            // 登入的帳號名稱
     user_permissions: number;   // 該 session 的使用者權限
-    createdAt: number;          // Create time (ms)
+    created_at: string;         // 該 session 創建時間 (timestamp) (2024-06-23T05:05:05.000Z)
 }
 
 
