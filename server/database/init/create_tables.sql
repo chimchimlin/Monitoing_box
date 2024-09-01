@@ -14,22 +14,52 @@ SET GLOBAL event_scheduler = ON;
 -- sensor_DB.Sensor definition
 
 CREATE TABLE `Sensor` (
-  `id` INT NOT NULL AUTO_INCREMENT,
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `dev_addr` VARCHAR(16) NOT NULL,
   `gps_longitude` DECIMAL(11, 8),
   `gps_latitude` DECIMAL(10, 8),
   `battery` INT DEFAULT NULL,
+  `is_fire` TINYINT NOT NULL DEFAULT 0,
+  `last_firetime` TIMESTAMP DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
   `last_refresh` TIMESTAMP NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 
+DELIMITER $$
+
+CREATE PROCEDURE SetSensorOnFire(IN sensorId INT)
+BEGIN
+  UPDATE Sensor
+  SET 
+    is_fire = 1,
+    last_firetime = current_timestamp()
+  WHERE 
+    id = sensorId;
+END $$
+
+DELIMITER ;
+DELIMITER $$
+
+CREATE PROCEDURE SetSensorOffFire(IN sensorId INT)
+BEGIN
+  UPDATE Sensor
+  SET 
+    is_fire = 0,
+    last_firetime = NULL
+  WHERE 
+    id = sensorId;
+END $$
+
+DELIMITER ;
+
+
 -- sensor_DB.SensorData definition
 
 CREATE TABLE `SensorData` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `sensor_id` INT NOT NULL,
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `sensor_id` INT UNSIGNED NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `temperature` FLOAT DEFAULT NULL,
   `humidity` FLOAT DEFAULT NULL,
@@ -80,7 +110,7 @@ DELIMITER ;
 -- sensor_DB.`User` definition
 
 CREATE TABLE `User` (
-  `id` INT NOT NULL AUTO_INCREMENT,
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(100) NOT NULL,
   `password` VARCHAR(128) NOT NULL,
   `user_permissions` INT UNSIGNED DEFAULT 0,
@@ -92,9 +122,9 @@ CREATE TABLE `User` (
 -- sensor_DB_db.`Session` definition
 
 CREATE TABLE `Session` (
-  `id` INT NOT NULL AUTO_INCREMENT,
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `session_id` VARCHAR(64) NOT NULL,
-  `user_id` INT NOT NULL,
+  `user_id` INT UNSIGNED NOT NULL,
   `device` VARCHAR(300) DEFAULT NULL,
   `last_refresh` TIMESTAMP NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),

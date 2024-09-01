@@ -6,19 +6,19 @@ USE `sensor_DB`;
 
 
 INSERT INTO 
-    Sensor (dev_addr, gps_longitude, gps_latitude, battery, created_at, last_refresh)
+    Sensor (dev_addr, gps_longitude, gps_latitude, battery, is_fire, last_firetime, created_at, last_refresh)
 VALUES 
-    ('00000000007e6ae1', '120.409107', '22.728404', NULL, current_timestamp(), current_timestamp());
+    ('00000000007e6ae1', '120.409107', '22.728404', NULL, 0, NULL, current_timestamp(), current_timestamp());
 
 INSERT INTO 
-    Sensor (dev_addr, gps_longitude, gps_latitude, battery, created_at, last_refresh)
+    Sensor (dev_addr, gps_longitude, gps_latitude, battery, is_fire, last_firetime, created_at, last_refresh)
 VALUES 
-    ('00000000007e6ae2', '120.412996', '22.728691', NULL, current_timestamp(), current_timestamp());
+    ('00000000007e6ae2', '120.412996', '22.728691', NULL, 0, NULL, current_timestamp(), current_timestamp());
 
 INSERT INTO 
-    Sensor (dev_addr, gps_longitude, gps_latitude, battery, created_at, last_refresh)
+    Sensor (dev_addr, gps_longitude, gps_latitude, battery, is_fire, last_firetime, created_at, last_refresh)
 VALUES 
-    ('00000000007e6ae3', '120.406891', '22.734965', NULL, current_timestamp(), current_timestamp());
+    ('00000000007e6ae3', '120.406891', '22.734965', NULL, 0, NULL, current_timestamp(), current_timestamp());
 
 
 INSERT INTO `SensorData` (`sensor_id`, `created_at`, `temperature`, `humidity`, `pressure`, `gas_resistance`) VALUES
