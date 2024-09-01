@@ -11,6 +11,7 @@ export const loginRequired = false;
 export const allowPermissions = [];
 
 
+import { convertUTCtoLocal } from '../../../util/convertUTCtoLocal.js';
 import { LoadType } from '../../../@types/Express.types.js';
 
 import type { Request, Response } from 'express';
@@ -67,15 +68,7 @@ export async function execute(req: Request, res: Response, config: ApiConfig, db
      * 不在 DB 端處理時區轉換, server 端處理就好
      */
     result = result.map((item: any) => {
-        item.created_at = new Date(item.created_at as string).toLocaleString('zh-TW', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour12: false,
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-        });
+        item.created_at = convertUTCtoLocal(item.created_at)
         return item;
     });
 

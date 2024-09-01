@@ -10,6 +10,7 @@ export const loginRequired = false;
 export const allowPermissions = [];
 
 
+import { convertUTCtoLocal } from '../../../util/convertUTCtoLocal.js';
 import { LoadType } from '../../../@types/Express.types.js';
 
 import type { Request, Response } from 'express';
@@ -36,6 +37,17 @@ export async function execute(req: Request, res: Response, config: ApiConfig, db
             data: []
         };
     }
+
+
+    /**
+     * 資料庫 TIMESTAMP 獲取的時區為 UTC (+0:00) (2024-06-23T05:05:05.000Z)
+     * 需轉換成 UTC+8 (2024-06-23 13:05:05)
+     * 不在 DB 端處理時區轉換, server 端處理就好
+     */
+    result = result.map((item: any) => {
+        item.last_refresh = convertUTCtoLocal(item.last_refresh)
+        return item;
+    });
 
 
     return {
