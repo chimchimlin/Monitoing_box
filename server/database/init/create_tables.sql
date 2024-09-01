@@ -29,7 +29,7 @@ CREATE TABLE `Sensor` (
 
 DELIMITER $$
 
-CREATE PROCEDURE SetSensorOnFire(IN sensorId INT)
+CREATE PROCEDURE SetSensorOnFire(IN sensorId INT UNSIGNED)
 BEGIN
   UPDATE Sensor
   SET 
@@ -42,7 +42,7 @@ END $$
 DELIMITER ;
 DELIMITER $$
 
-CREATE PROCEDURE SetSensorOffFire(IN sensorId INT)
+CREATE PROCEDURE SetSensorOffFire(IN sensorId INT UNSIGNED)
 BEGIN
   UPDATE Sensor
   SET 

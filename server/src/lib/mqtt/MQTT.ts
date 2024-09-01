@@ -36,11 +36,15 @@ export class MQTT {
     #client!: mqtt.MqttClient;
     #db: Database;
 
+    #sensorMap: Map<string, { count: number, prevGasResistance: number }>;    // <dev_addr, { 次數, 前一筆氣體阻抗值 }>
+
     constructor(config: MQTTConfig, db: Database) {
         this.#mqtt = mqtt;
         this.#topic = config.topic
         this.#options = config.options
         this.#db = db;
+
+        this.#sensorMap = new Map<string, { count: number, prevGasResistance: number }>();
     }
 
     public async start() {
@@ -63,7 +67,7 @@ export class MQTT {
 
         this.#client.on('message', async (topic, message) => {
             const receivedData = JSON.parse(message.toString())[0] as MQTTData;
-            
+
             // console.log(getFormatTime(), `[MQTT] Received message from ${topic}: `, JSON.parse(message.toString())[0]);
             console.log(getFormatTime(), `[MQTT] Received data from ${topic}: `, message.toString());
 
@@ -125,6 +129,9 @@ export class MQTT {
             `;
             const result = await this.#db.query(query);
             // console.log('INSERT sensorData', result);
+
+            // 計算火災機率
+            await this.#calcFireProbability(receivedData.macAddr, sensorData.gas_resistance);
         });
 
         this.#client.on('error', (err) => {
@@ -162,6 +169,68 @@ export class MQTT {
         }
 
         return (floatArray.length !== SENSOR_DATA_ARRAY_LENGTH) ? false : floatArray;
+    }
+
+    /**
+     * 計算火災機率
+     * @private
+     * 
+     */
+    async #calcFireProbability(macAddr: string, gasResistance: number) {
+        /**
+         * (目前資料氣體阻抗值 - 前一筆氣體阻抗值)/前一筆氣體阻抗值 * 100%
+         * 連續三次 -20% 以上
+         * 氣體阻抗值 < 25
+         */
+
+        // 1. 取得 sensor_id 和前一筆氣體阻抗值
+        const sensor = this.#sensorMap.get(macAddr);
+
+        if (!sensor) {
+            // 如果 sensor 尚未在 sensorMap 中，則添加新的記錄，並結束此次判斷
+            this.#sensorMap.set(macAddr, { count: 1, prevGasResistance: gasResistance });
+            return;
+        }
+
+        const { count, prevGasResistance } = sensor;
+        const gasResistanceChangePercentage = ((gasResistance - prevGasResistance) / prevGasResistance) * 100;
+
+        // 2. 更新 sensorMap 中的記錄
+        this.#sensorMap.set(macAddr, {
+            count: count + 1,
+            prevGasResistance: gasResistance
+        });
+
+        // 3. 判斷火災條件
+        const isGasResistanceLow = gasResistance < 25;                      // 氣體阻抗值 < 25
+        const isSignificantDrop = gasResistanceChangePercentage <= -20;     // -20% 以上
+
+        if (isGasResistanceLow && isSignificantDrop) {
+            // 如果連續三次氣體阻抗值下降超過 20% 且氣體阻抗值小於 25，則判斷為火災
+            if (count >= 3) {
+                try {
+                    // 根據 macAddr 獲取 sensorId
+                    const query = `SELECT id FROM Sensor WHERE dev_addr = "${macAddr}";`;
+                    const result = await this.#db.query(query);
+                    const sensorId = result.length > 0 ? (result[0] as any).id : null;
+    
+                    if (sensorId) {
+                        // 設置火災狀態
+                        const callQuery = `CALL SetSensorOnFire(${sensorId});`;
+                        await this.#db.query(callQuery);
+                        console.log(getFormatTime(), `[MQTT] Fire detected for sensor ${macAddr}`);
+                    }
+                } catch (error) {
+                    console.log(getFormatTime(), `[MQTT] Fire to setup fire notification on sensor ${macAddr}`, error);
+                }
+            }
+        }
+        else {
+            // 如果不符合條件，則重置連續計數器
+            if (count >= 3) {
+                this.#sensorMap.set(macAddr, { count: 1, prevGasResistance: gasResistance });
+            }
+        }
     }
 }
 
