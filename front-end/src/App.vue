@@ -1,18 +1,23 @@
 <!-- App.vue -->
 <template>
 
-  <Wellcome class="wellcome"/>
+
+  <div id="app">
+    <router-view />
+  </div>
+
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Wellcome from './view/Wellcome.vue';
+import Wellcome from './view/Home.vue';
 
 
 export default defineComponent({
   name: 'App',
   components: {
     Wellcome
+    
   }
 });
 </script>

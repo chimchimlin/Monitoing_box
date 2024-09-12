@@ -4,7 +4,11 @@ import Map from '../view/Map.vue';    // 地圖頁面組件
 import SensorChart from '../view/SensorChart.vue';    // 圖表頁面組件
 
 const routes = [
-  
+  {
+    path: '/',
+    name: 'Home',
+    component: Home
+  },
   {
     path: '/Map',
     name: 'SensorMap',
@@ -13,7 +17,7 @@ const routes = [
   {
     path: '/Sensor/:id',
     name: 'SensorChart',
-    component: Home
+    component: SensorChart
   }
 ];
 

@@ -1,7 +1,8 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
-import axios from 'axios';
 
+//https://sensor-server.ggwp.tw/
 // https://vitejs.dev/config/
 //https://netlab.isu.edu.tw:59534/
 export default defineConfig({
@@ -9,7 +10,7 @@ export default defineConfig({
     server: {
         proxy: {
             '/api': {
-                target: 'https://sensor-server.ggwp.tw/',
+                target: 'https://netlab.isu.edu.tw:59534/',
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/api/, '/api'),
                 //async onProxyReq(proxyReq) {
@@ -24,4 +25,9 @@ export default defineConfig({
             },
         },
     },
+    resolve: {
+        alias: {
+            '@': fileURLToPath(new URL('./src', import.meta.url))
+        }
+    }
 });

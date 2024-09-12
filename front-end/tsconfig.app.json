@@ -8,6 +8,7 @@
     "src/**/*/*.vue",
     "src/stores/*",
     "src/stores/*.ts",
+    "src/components/fire/*.vue"
   ],
   "exclude": [
     "src/**/__tests__/*"

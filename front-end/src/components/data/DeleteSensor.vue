@@ -15,9 +15,13 @@
 
 <script lang="ts">
 import { defineComponent, ref, reactive } from 'vue';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
+
 import { LoadType } from '@/@types/Response.types';
+
+import type { AxiosResponse } from 'axios';
 import type { ResultData } from '@/@types/Response.types';
+
 
 interface SensorId {
   sensor_id: number;
@@ -76,7 +80,7 @@ async function deleteSensor(id: SensorId) {
       data: { sensor_id: id.sensor_id }
     });
 
-    if (result.data.loadType === 1000) {
+    if (result.data.loadType === LoadType.SUCCEED) {
       return { success: true, data: result.data.data };
     } else if (result.data.loadType === 1051) {
       return { success: false, errorMessage: '查詢失敗，請稍後再試' };
