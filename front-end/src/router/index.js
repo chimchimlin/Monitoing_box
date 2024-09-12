@@ -1,14 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '../view/Home.vue';  // ¥D­¶­±²Õ¥ó
-import Map from '../view/Map.vue';    // ¦a¹Ï­¶­±²Õ¥ó
-import SensorChart from '../view/SensorChart.vue';    // ¹Ïªí­¶­±²Õ¥ó
+import Home from '../view/Home.vue';  // ä¸»é é¢çµ„ä»¶
+import Map from '../view/Map.vue';    // åœ°åœ–é é¢çµ„ä»¶
+import SensorChart from '../view/SensorChart.vue';    // åœ–è¡¨é é¢çµ„ä»¶
 
 const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
+  
   {
     path: '/Map',
     name: 'SensorMap',
@@ -17,7 +13,7 @@ const routes = [
   {
     path: '/Sensor/:id',
     name: 'SensorChart',
-    component: SensorChart
+    component: Home
   }
 ];
 
