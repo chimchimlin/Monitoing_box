@@ -42,6 +42,7 @@ typedef struct
 
 #define SENSOR_DATA_SIZE 20     // Sensor data size to be sent
 
+#define timeup 30000;
 
 /**
  * LED setup

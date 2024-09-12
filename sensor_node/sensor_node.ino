@@ -96,12 +96,16 @@ void getBME680Readings()
     if (endTime == 0)
     {
         Serial.println(F("Failed to begin reading :("));
-        errLeds();
+        int stoptime;
+        stoptime=millis();
+        errLeds(stoptime);
     }
     if (!bme.endReading())
     {
         Serial.println(F("Failed to complete reading :("));
-        errLeds();
+        int stoptime;
+        stoptime=millis();
+        errLeds(stoptime);
     }
 
     sensorData.temperature = bme.temperature;
@@ -110,15 +114,24 @@ void getBME680Readings()
     sensorData.gasResistance = bme.gas_resistance / 1000.0;
 }
 
-void errLeds(void)
+void softwareReset() {
+  asm volatile ("  jmp 0"); 
+}
+void errLeds(int stoptime)
 {
+  int nowtime;
     while (1)
     {
+        nowtime=millis();
         digitalWrite(PANIC_LED, HIGH);
         delay(ERROR_DURATION);
         digitalWrite(PANIC_LED, LOW);
         delay(ERROR_DURATION);
+        if(nowtime-stoptime>=timeup){
+        softwareReset();
+        }
     }
+  
 }
 
 /**
@@ -162,9 +175,10 @@ void setup()
 
     // Init BME680 sensor
     if (!bme.begin())
-    {
+    {   int stoptime;
+        stoptime=millis();
         Serial.println(F("Could not find a valid BME680 sensor, check wiring!"));
-        errLeds();
+        errLeds(stoptime);
     }
 
     // Set up oversampling and filter initialization
