@@ -30,6 +30,25 @@ export default defineComponent({
       return sensorStore.state.sensors.filter(sensor => sensor.is_fire);
     });
 
+    // 定義正常狀態和火災狀態的圖標
+    const normalIcon = new L.Icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
+
+    const fireIcon = new L.Icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
+
     const initializeMap = () => {
       if (map) return;
 
@@ -40,7 +59,7 @@ export default defineComponent({
       }).addTo(map);
 
       addMarkers();
-      isMapInitialized.value = true;  // 設置地圖初始化完成
+      isMapInitialized.value = true;
     };
 
     const addMarkers = async () => {
@@ -79,7 +98,10 @@ export default defineComponent({
             `
             : `Sensor: ${sensor.name}<br>目前無數據`;
 
-          const marker = L.marker([sensor.latitude, sensor.longitude]).addTo(map)
+          // 根據火災狀態選擇圖標
+          const icon = sensor.is_fire ? fireIcon : normalIcon;
+
+          const marker = L.marker([sensor.latitude, sensor.longitude], { icon: icon }).addTo(map)
             .bindPopup(popupContent);
 
           marker.on('mouseover', () => marker.openPopup());
