@@ -40,7 +40,7 @@ h1 {
 }
 
 .sensor-list {
-  /* ½Õ¾ã³o¨Ç­È¥H¾AÀ³±zªº³]­p */
+  /* èª¿æ•´é€™äº›å€¼ä»¥é©æ‡‰æ‚¨çš„è¨­è¨ˆ */
   max-width: 300px;
   max-height: 300px;
   overflow-y: auto;
@@ -50,7 +50,7 @@ h1 {
 }
 
 main {
-  /* ½T«O¥D­n¤º®e¦b¼ĞÃD¤U¤è */
+  /* ç¢ºä¿ä¸»è¦å…§å®¹åœ¨æ¨™é¡Œä¸‹æ–¹ */
   clear: both;
 }
 </style>
