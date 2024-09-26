@@ -14,10 +14,10 @@
 前端再藉由 RESTful API 向後端獲取當前所有感測節點資料並顯示於地圖上。
 
 
-![3DPrint-1](./public/images/3DPrint-1.jpg)  
-![3DPrint-2](./public/images/3DPrint-2.jpg)  
-![sensor-map](./public/images/sensor-map.png)  
-![sensor-chart](./public/images/sensor-chart.png)  
+<img src="./public/images/3DPrint-1.jpg" width="600px">
+<img src="./public/images/3DPrint-2.jpg" width="600px">
+<img src="./public/images/sensor-map.png" width="600px">
+<img src="./public/images/sensor-chart.png" width="600px">
 
 
 
