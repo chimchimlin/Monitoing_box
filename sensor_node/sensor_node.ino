@@ -115,11 +115,11 @@ void getBME680Readings()
 }
 
 void softwareReset() {
-  asm volatile ("  jmp 0"); 
+  esp_restart();
 }
 void errLeds(int stoptime)
 {
-  int nowtime;
+  int nowtime,over;
     while (1)
     {
         nowtime=millis();
@@ -127,9 +127,8 @@ void errLeds(int stoptime)
         delay(ERROR_DURATION);
         digitalWrite(PANIC_LED, LOW);
         delay(ERROR_DURATION);
-        if(nowtime-stoptime>=timeup){
-        softwareReset();
-        }
+        over=nowtime-stoptime;
+        if(over>30000){softwareReset();}
     }
   
 }
