@@ -97,14 +97,14 @@ void getBME680Readings()
     {
         Serial.println(F("Failed to begin reading :("));
         int stoptime;
-        stoptime=millis();
+        stoptime = millis();
         errLeds(stoptime);
     }
     if (!bme.endReading())
     {
         Serial.println(F("Failed to complete reading :("));
         int stoptime;
-        stoptime=millis();
+        stoptime = millis();
         errLeds(stoptime);
     }
 
@@ -114,23 +114,32 @@ void getBME680Readings()
     sensorData.gasResistance = bme.gas_resistance / 1000.0;
 }
 
+/**
+ * Restart ESP32
+ */
 void softwareReset() {
-  esp_restart();
+    esp_restart();
 }
+
 void errLeds(int stoptime)
 {
-  int nowtime,over;
+    int nowtime, over;
     while (1)
     {
-        nowtime=millis();
+        nowtime = millis();
+
         digitalWrite(PANIC_LED, HIGH);
         delay(ERROR_DURATION);
         digitalWrite(PANIC_LED, LOW);
         delay(ERROR_DURATION);
-        over=nowtime-stoptime;
-        if(over>30000){softwareReset();}
+
+        over = nowtime - stoptime;
+
+        if (over > ERROR_LOOP_TIME)
+        {
+            softwareReset();
+        }
     }
-  
 }
 
 /**

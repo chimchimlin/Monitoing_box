@@ -42,7 +42,6 @@ typedef struct
 
 #define SENSOR_DATA_SIZE 20     // Sensor data size to be sent
 
-#define timeup 30000;
 
 /**
  * LED setup
@@ -51,6 +50,7 @@ typedef struct
 #define DATA_LED GPIO_NUM_34        // 感測資料獲取中指示燈 (getting sensor data)
 #define PANIC_LED GPIO_NUM_35       // 錯誤指示燈 (error)
 #define ERROR_DURATION 1000         // PANIC_LED 閃爍間隔 (ms)
+#define ERROR_LOOP_TIME 30000;      // 錯誤重啟 PANIC_LED 閃爍時間
 
 
 #endif /* CONFIG_H */
