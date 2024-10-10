@@ -1,38 +1,41 @@
 <template>
-  <div class="delete-sensor-form">
+  <el-form label-width="120px" @submit.prevent="handleSubmit">
     <h2>刪除感測節點</h2>
-    <form @submit.prevent="handleSubmit">
-      <div>
-        <label for="sensor_id">感測器 ID:</label>
-        <input id="sensor_id" v-model.number="id.sensor_id" type="number" required>
-      </div>
-      <button type="submit" :disabled="isSubmitting">刪除感測節點</button>
-    </form>
+    <el-form-item label="感測器名稱:" prop="sensor_name" required>
+      <el-select v-model="selectedSensorName" placeholder="請選擇感測器">
+        <el-option
+          v-for="sensor in sensorStore.state.sensors"
+          :key="sensor.id"
+          :label="sensor.name"
+          :value="sensor.name"
+        />
+      </el-select>
+    </el-form-item>
+    <el-form-item>
+      <el-button type="danger" native-type="submit" :disabled="isSubmitting || !selectedSensorName">刪除感測節點</el-button>
+    </el-form-item>
     <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
     <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
-  </div>
+  </el-form>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, reactive } from 'vue';
 import axios from 'axios';
-
 import { LoadType } from '@/@types/Response.types';
-
 import type { AxiosResponse } from 'axios';
 import type { ResultData } from '@/@types/Response.types';
-
+import sensorStore from '@/stores/sensorStore';
+import sensorDataStore from '@/stores/sensorStore'
 
 interface SensorId {
-  sensor_id: number;
-}
+sensor_id: number;
 
+}
 export default defineComponent({
   name: 'DeleteSensor',
   setup() {
-    const id = reactive<SensorId>({ 
-      sensor_id: 0,
-    });
+    const selectedSensorName = ref('');
     const errorMessage = ref('');
     const successMessage = ref('');
     const isSubmitting = ref(false);
@@ -43,10 +46,18 @@ export default defineComponent({
       isSubmitting.value = true;
 
       try {
-        const result = await deleteSensor(id);
+        const sensorId = sensorStore.state.sensors.find(sensor => sensor.name === selectedSensorName.value)?.id;
+        if (!sensorId) {
+          errorMessage.value = '找不到对应的感測器 ID';
+          return;
+        }
+
+        const result = await deleteSensor({ sensor_id: sensorId });
         if (result.success) {
           successMessage.value = '感測節點刪除成功！';
-          id.sensor_id = 0;
+          selectedSensorName.value = ''; // 清空选择
+          // 更新 sensorStore 中的感測器列表
+          await sensorStore.fetchSensors();
         } else {
           errorMessage.value = result.errorMessage || '刪除失敗';
         }
@@ -59,11 +70,12 @@ export default defineComponent({
     };
 
     return {
-      id,
+      selectedSensorName,
       errorMessage,
       successMessage,
       isSubmitting,
-      handleSubmit
+      handleSubmit,
+      sensorStore, // 将 sensorStore 添加到返回值中
     };
   }
 });

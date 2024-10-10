@@ -1,32 +1,37 @@
 <template>
     <div v-if="isOpen" class="modal-overlay" @click.self="close">
-        <div class="modal-content">
-            <button class="close-button" @click="close">&times;</button>
-            <slot></slot>
-        </div>
+      <div class="modal-content">
+        <button class="close-button" @click="close">&times;</button>
+        <h3 v-if="title" class="modal-title">{{ title }}</h3> 
+        <slot></slot>
+      </div>
     </div>
-</template>
-
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-
-export default defineComponent({
+  </template>
+  
+  <script lang="ts">
+  import { defineComponent } from 'vue';
+  
+  export default defineComponent({
     name: 'ModalWindow',
     props: {
-        isOpen: {
-            type: Boolean,
-            required: true
-        }
+      isOpen   
+  : {
+        type: Boolean,
+        required: true
+      },
+      title: { 
+        type: String,
+        default: '' 
+      }
     },
     emits: ['close'],
     methods: {
-        close() {
-            this.$emit('close');
-        }
+      close() {
+        this.$emit('close');
+      }
     }
-});
-</script>
+  });
+  </script>
 
 <style scoped>
 .modal-overlay {
@@ -42,10 +47,17 @@ export default defineComponent({
 }
 
 .modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    position: relative;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+  max-width: 500px; /* 调整最大宽度 */
+  width: 80%; /* 调整宽度比例 */
+}
+
+.modal-title {
+    margin-top: 0; 
+    margin-bottom: 15px; 
 }
 
 .close-button {

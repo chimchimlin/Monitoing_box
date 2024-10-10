@@ -1,52 +1,78 @@
 <template>
-  <div class="current-sensor-name">
-  <span class="label">感測器：</span>
-  <span class="name">{{ currentSensor.value?.name }}</span>
-  </div>
-  <div class="sensor-actions">
-    <header>
-      <button @click="toggleMenu" class="action-button">感測器</button>
-      <div v-if="isMenuOpen" class="dropdown-menu">
-        <button @click="openModal('add')">添加感測器</button>
-        <button @click="openModal('edit')">編輯感測器</button>
-        <button @click="openModal('delete')">刪除感測器</button>
+  <el-container>
+    <el-header>
+      <el-row type="flex" justify="space-between" align="middle">
+        <el-col :span="12">
+              <div class="current-sensor-border">
+                <div class="sensor-text" >
+            <span class="label">感測器：</span>
+            <span class="name">{{ currentSensor?.name || '未選擇' }}</span>
+            </div>
+          </div>
+        </el-col>
+        <el-col :span="12" style="text-align: right;">
+          <el-dropdown @command="handleCommand">
+        <el-button type="primary">
+          感測器
+        </el-button>
+        <template #dropdown> 
+          <el-dropdown-menu>
+            <el-dropdown-item command="add">添加感測器</el-dropdown-item>
+            <el-dropdown-item command="edit">編輯感測器</el-dropdown-item>
+            <el-dropdown-item command="delete">刪除感測器</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+          <el-button type="primary" @click="goToMap" icon="el-icon-map-location">地圖</el-button>
+        </el-col>
+      </el-row>
+    </el-header>
+
+    <el-main>
+      <el-card v-if="currentSensor" class="sensor-info">
+        <div class="sensor_fire">
+        <el-row>
+          <el-col :span="24">
+            <el-tag :type="currentSensor.is_fire ? 'danger' : 'success'">
+              {{ currentSensor.is_fire ? '發生火災' : '正常' }}
+            </el-tag>
+          </el-col>
+        </el-row>
+        <el-row v-if="currentSensor.is_fire">
+          <el-col :span="24">
+            <p><strong>發生時間：</strong>{{ currentSensor.last_firetime ? formatDateTime(currentSensor.last_firetime) : '無資料' }}</p>
+          </el-col>
+        </el-row>
+        <el-row v-if="currentSensor.is_fire">
+          <el-col :span="24">
+            <el-button type="danger" @click="turnOffAlarm(currentSensor.id)">手動關閉火災警報</el-button>
+          </el-col>
+        </el-row>
       </div>
-      <button @click="goToMap" class="action-button map-button">地圖</button>
-    </header>
+      </el-card>
+      <el-alert
+        v-else
+        title="未選擇感測器"
+        type="info"
+        :closable="false">
+      </el-alert>
 
+      <el-row :gutter="20">
+        <el-col :span="12">
 
+          <SensorList class="sensor-list" :sensors="sensors" @sensor-selected="onSensorSelected" />
+      
+        </el-col>
+        <el-col :span="24">
+          <SensorChart />
+        </el-col>
+      </el-row>
+    </el-main>
 
-    <div class="sensor-actions">
-    <div class="sensor-info-container">
-      <div v-if="currentSensor" class="current-sensor">
-        <p>
-          <strong>警報狀態：</strong>
-          <span :class="{ 'status-normal': !currentSensor.value?.is_fire, 'status-fire': currentSensor.value?.is_fire }">
-            {{ currentSensor.value?.is_fire ? '發生火災' : '正常' }}
-          </span>
-        </p>
-        <p v-if="currentSensor.value?.is_fire">
-          <strong>發生時間：</strong>{{ currentSensor.value?.last_firetime ? formatDateTime(currentSensor.value?.last_firetime) : '無資料' }}
-        </p>
-        <button v-if="currentSensor.value?.is_fire" @click="turnOffAlarm(currentSensor.value?.id)" class="alarm-button">
-          手動關閉火災警報
-        </button>
-      </div>
-      <div v-else class="no-sensor">未選擇感測器</div>
-    </div>
-    </div>
-
-    <main>
-      <SensorList class="sensor-list" :sensors="sensors" @sensor-selected="onSensorSelected" />
-      <SensorChart />
-    </main>
-
-
-
-    <ModalWindow :is-open="isModalOpen" @close="closeModal">
-      <component :is="currentModalComponent" @close="closeModal"></component>
+    <ModalWindow :isOpen="isModalOpen" :title="modalTitle" @close="closeModal">
+      <component :is="currentModalComponent" @close="closeModal" /> 
     </ModalWindow>
-  </div>
+  </el-container>
 </template>
 
 <script lang="ts">
@@ -59,6 +85,7 @@ import EditSensor from '../components/data/EditSensor.vue';
 import DeleteSensor from '../components/data/DeleteSensor.vue';
 import ModalWindow from '../components/ModalWindow.vue';
 import sensorStore from '../stores/sensorStore';
+
 
 export default defineComponent({
   name: 'Home',
@@ -83,21 +110,35 @@ export default defineComponent({
       isMenuOpen.value = !isMenuOpen.value;
     };
 
-    const openModal = (action: string) => {
-      isMenuOpen.value = false;
-      switch (action) {
-        case 'add':
-          currentModalComponent.value = AddSensor;
-          break;
-        case 'edit':
-          currentModalComponent.value = EditSensor;
-          break;
-        case 'delete':
-          currentModalComponent.value = DeleteSensor;
-          break;
+    const modalTitle = computed(() => {
+      switch (currentModalComponent.value) {
+        case AddSensor:
+          return '添加感測器';
+        case EditSensor:
+          return '編輯感測器';
+        case DeleteSensor:
+          return '刪除感測器';
+        default:
+          return '';
       }
-      isModalOpen.value = true;
-    };
+    });
+
+const handleCommand = (command: string) => {
+  console.log('Command:', command); 
+  switch (command) {
+    case 'add':
+      currentModalComponent.value = AddSensor;
+      break;
+    case 'edit':
+      currentModalComponent.value = EditSensor;
+      break;
+    case 'delete':
+      currentModalComponent.value = DeleteSensor;
+      break;
+  }
+  console.log('Current modal component:', currentModalComponent.value); 
+  isModalOpen.value = true; 
+};
 
     const closeModal = () => {
       isModalOpen.value = false;
@@ -108,7 +149,7 @@ export default defineComponent({
     };
 
     const sensors = computed(() => sensorStore.state.sensors);
-    const currentSensor = computed(() => sensorStore.currentSensor);
+    const currentSensor = computed(() => sensorStore.currentSensor.value);
 
     const turnOffAlarm = async (sensorId: number) => {
       try {
@@ -154,16 +195,6 @@ export default defineComponent({
 
    
 
-    onMounted(async () => {
-      try {
-        await sensorStore.fetchSensors();
-        isLoading.value = false;
-      } catch (e) {
-        error.value = "無法加載感測器數據";
-        isLoading.value = false;
-      }
-    });
-
 
     // 監視 currentSensor 的變化
     watch(() =>sensorStore.currentSensor, (newSensor) => {
@@ -180,7 +211,8 @@ export default defineComponent({
       currentModalComponent,
       goToMap,
       toggleMenu,
-      openModal,
+      modalTitle,
+      handleCommand,
       closeModal,
       onSensorSelected,
       currentSensor,
@@ -194,6 +226,7 @@ export default defineComponent({
 });
 </script>
 <style scoped>
+
 
 .loading, .error, .no-sensor {
   padding: 20px;
@@ -213,10 +246,8 @@ export default defineComponent({
 }
 
 header {
-  display: flex;
-  justify-content: space-between;
+  display: inline-flex;
   align-items:center;
-  margin-bottom: 20px;
 }
 
 h1 {
@@ -341,15 +372,45 @@ main {
   border: 2px solid #5b92d9; /* 添加邊框 */
   display: inline-block; /* 使元素寬度適應內容 */
 }
-.label {
-  font-weight: bold;
-  color: #555;
 
+
+
+
+
+.current-sensor-border {
+  border: 2px solid #344366;
+  border-radius: 4px;
+  padding: 5px 15px;
+  display: inline-flex;
+  
 }
 
-.name {
+.sensor-text {
+  display:flex;
+  height: 24px; /* 根據需要調整高度 */
+  margin-right:30px;
+}
+
+.sensor-text .label {
+  font-weight: bold;
+  margin-right:0px;
+  flex-shrink: 0;
+}
+
+.sensor-text .name {
   color: #5b92d9;
-  font-weight: bold;
+  font-size: 16px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
+
+.sensor-info {
+  position: fixed;
+  top: 20px; 
+  right: 20px; 
+  z-index: 1000; 
+  width: 300px; 
+}
+
 
 </style>

@@ -1,18 +1,23 @@
 <template>
     <div>
-        <div class="chart-container">
-            <Line v-if="chartData" :data="chartData" :options="chartOptions" />
-        </div>
-        <div class="selector-container">
-            <select v-model="displayCount" @change="updateChart">
-                <option v-for="option in displayOptions" :key="option" :value="option">
-                    {{ option }} 筆數據
-                </option>
-            </select>
-            <span>顯示從 {{ formatDate(startDate) }} 到 {{ formatDate(endDate) }} 的數據</span>
-        </div>
+      <div class="chart-container">
+        <Line v-if="chartData" :data="chartData" :options="chartOptions" />
+      </div>
+      <div class="selector-container">
+        <el-select v-model="displayCount" @change="updateChart" style="width: 120px;">
+          <el-option
+            v-for="option in displayOptions"
+            :key="option"
+            :label="`${option} 筆數據`"
+            :value="option"
+          />
+        </el-select>
+        <el-text class="mx-1">
+          顯示從 {{ formatDate(startDate) }} 到 {{ formatDate(endDate) }} 的數據
+        </el-text>
+      </div>
     </div>
-</template>
+  </template>
 
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from 'vue';
@@ -126,13 +131,14 @@ export default defineComponent({
 
 <style scoped>
 .chart-container {
-    height: 300px;
-    width: 500px;
+  height: 400px;
+  margin-bottom: 20px;
 }
+
 .selector-container {
-    margin-top: 20px;
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .selector-container select {
     margin-right: 10px;

@@ -1,25 +1,22 @@
 <template>
-    <div class="add-sensor-form">
-        <h2>添加感測節點</h2>
-        <form @submit.prevent="handleSubmit">
-            <div>
-                <label for="dev_addr">DEV Address:</label>
-                <input id="dev_addr" v-model="sensorData.dev_addr" required>
-            </div>
-            <div>
-                <label for="gps_longitude">GPS 經度:</label>
-                <input id="gps_longitude" v-model="sensorData.gps_longitude" required>
-            </div>
-            <div>
-                <label for="gps_latitude">GPS 緯度:</label>
-                <input id="gps_latitude" v-model="sensorData.gps_latitude" required>
-            </div>
-            <button type="submit" :disabled="isSubmitting">添加感測節點</button>
-        </form>
-        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-        <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
-    </div>
-</template>
+    <el-form :model="sensorData" label-width="120px" @submit.prevent="handleSubmit">
+      <h2>添加感測節點</h2>
+      <el-form-item label="DEV Address:" prop="dev_addr" required>
+        <el-input v-model="sensorData.dev_addr" />
+      </el-form-item>
+      <el-form-item label="GPS 經度:" prop="gps_longitude" required>
+        <el-input v-model="sensorData.gps_longitude" />
+      </el-form-item>
+      <el-form-item label="GPS 緯度:" prop="gps_latitude" required>
+        <el-input v-model="sensorData.gps_latitude" />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" native-type="submit" :disabled="isSubmitting">添加感測節點</el-button>
+      </el-form-item>
+      <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+      <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
+    </el-form>
+  </template>
 
 
 

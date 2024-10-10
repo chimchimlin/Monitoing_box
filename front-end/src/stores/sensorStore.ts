@@ -4,7 +4,7 @@ import { LoadType } from '@/@types/Response.types';
 import type { AxiosResponse } from 'axios';
 import type { ResultData } from '@/@types/Response.types';
 
-interface Sensor {
+export interface Sensor {
   id: number;
   name: string;
   latitude: number;
