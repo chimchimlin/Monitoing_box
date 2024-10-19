@@ -6,6 +6,7 @@
  * dev_addr (string)        LORA gateway 所送出的 ABP devAddr (00000000007e6ae1)
  * gps_longitude (string)   GPS 經度 (120.4058239)
  * gps_latitude (string)    GPS 緯度 (22.7271472)
+ * description (string)     Sensor 描述
  */
 export const path = '/api/sensor/addSensor';
 export const method = 'POST';
