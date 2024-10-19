@@ -5,7 +5,7 @@ import mqtt from 'mqtt';
 const DEV_ADDR = '00000000007e6ae3';
 
 const BATTERY_PERCENT = 85;
-const INTERVAL_TIME = 10 * 1000;    // 10s 秒發送一次
+const INTERVAL_TIME = 10 * 1000;    // 10s 發送一次
 
 const mqttConfig = {
     brokerUrl: 'mqtt://<host>:<port>',
