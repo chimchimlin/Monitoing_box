@@ -30,7 +30,8 @@ export async function execute(req: Request, res: Response, config: ApiConfig, db
         !Number.isInteger(Number(req.body.sensor_id)) || Number(req.body.sensor_id) === 0 ||
         (typeof (req.body.dev_addr) !== 'string' || !rangeCheck.string_length(req.body.dev_addr, 100)) ||
         (typeof (req.body.gps_longitude) !== 'string' || !rangeCheck.string_length(req.body.gps_longitude, 100)) ||
-        (typeof (req.body.gps_latitude) !== 'string' || !rangeCheck.string_length(req.body.gps_latitude, 100))
+        (typeof (req.body.gps_latitude) !== 'string' || !rangeCheck.string_length(req.body.gps_latitude, 100)) ||
+        (typeof (req.body.description) !== 'string' || !rangeCheck.string_length(req.body.description, 128))
     ) {
         return {
             loadType: LoadType.PARAMETER_ERROR,
@@ -43,7 +44,8 @@ export async function execute(req: Request, res: Response, config: ApiConfig, db
         sensor_id: req.body.sensor_id,
         dev_addr: req.body.dev_addr,
         gps_longitude: req.body.gps_longitude,
-        gps_latitude: req.body.gps_latitude
+        gps_latitude: req.body.gps_latitude,
+        description: req.body.description
     };
 
     try {
@@ -72,7 +74,8 @@ export async function execute(req: Request, res: Response, config: ApiConfig, db
             SET 
                 dev_addr = "${newSensor.dev_addr}", 
                 gps_longitude = "${newSensor.gps_longitude}", 
-                gps_latitude = "${newSensor.gps_latitude}"
+                gps_latitude = "${newSensor.gps_latitude}", 
+                description = "${newSensor.description}"
             WHERE 
                 id = ${newSensor.sensor_id};
         `;

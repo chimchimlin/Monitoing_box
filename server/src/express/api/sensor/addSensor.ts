@@ -28,7 +28,8 @@ export async function execute(req: Request, res: Response, config: ApiConfig, db
     if (
         (typeof (req.body.dev_addr) !== 'string' || !rangeCheck.string_length(req.body.dev_addr, 100)) ||
         (typeof (req.body.gps_longitude) !== 'string' || !rangeCheck.string_length(req.body.gps_longitude, 100)) ||
-        (typeof (req.body.gps_latitude) !== 'string' || !rangeCheck.string_length(req.body.gps_latitude, 100))
+        (typeof (req.body.gps_latitude) !== 'string' || !rangeCheck.string_length(req.body.gps_latitude, 100)) ||
+        (typeof (req.body.description) !== 'string' || !rangeCheck.string_length(req.body.description, 128))
     ) {
         return {
             loadType: LoadType.PARAMETER_ERROR,
@@ -40,7 +41,8 @@ export async function execute(req: Request, res: Response, config: ApiConfig, db
     const newSensor = {
         dev_addr: req.body.dev_addr,
         gps_longitude: req.body.gps_longitude,
-        gps_latitude: req.body.gps_latitude
+        gps_latitude: req.body.gps_latitude,
+        description: req.body.description
     };
 
     try {
@@ -64,8 +66,8 @@ export async function execute(req: Request, res: Response, config: ApiConfig, db
 
 
         const query = `
-            INSERT INTO Sensor (dev_addr, last_refresh, gps_longitude, gps_latitude)
-            VALUES ("${newSensor.dev_addr}", current_timestamp(), "${newSensor.gps_longitude}", "${newSensor.gps_latitude}");
+            INSERT INTO Sensor (dev_addr, last_refresh, gps_longitude, gps_latitude, description)
+            VALUES ("${newSensor.dev_addr}", current_timestamp(), "${newSensor.gps_longitude}", "${newSensor.gps_latitude}", "${newSensor.description}");
         `;
         const result = await db.query(query);
         console.log(path, result);
