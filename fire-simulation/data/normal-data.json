@@ -1,0 +1,194 @@
+[
+    {
+        "temperature": 29.61,
+        "humidity": 47.71,
+        "pressure": 1004.53,
+        "gas_resistance": 96.26
+    },
+    {
+        "temperature": 29.69,
+        "humidity": 47.45,
+        "pressure": 1004.54,
+        "gas_resistance": 108.63
+    },
+    {
+        "temperature": 29.65,
+        "humidity": 47.68,
+        "pressure": 1004.55,
+        "gas_resistance": 100.6
+    },
+    {
+        "temperature": 29.64,
+        "humidity": 47.77,
+        "pressure": 1004.56,
+        "gas_resistance": 97.27
+    },
+    {
+        "temperature": 29.72,
+        "humidity": 47.51,
+        "pressure": 1004.57,
+        "gas_resistance": 109.12
+    },
+    {
+        "temperature": 29.71,
+        "humidity": 47.43,
+        "pressure": 1004.57,
+        "gas_resistance": 114.1
+    },
+    {
+        "temperature": 29.61,
+        "humidity": 47.71,
+        "pressure": 1004.53,
+        "gas_resistance": 96.26
+    },
+    {
+        "temperature": 29.69,
+        "humidity": 47.45,
+        "pressure": 1004.54,
+        "gas_resistance": 108.63
+    },
+    {
+        "temperature": 29.65,
+        "humidity": 47.68,
+        "pressure": 1004.55,
+        "gas_resistance": 100.6
+    },
+    {
+        "temperature": 29.64,
+        "humidity": 47.77,
+        "pressure": 1004.56,
+        "gas_resistance": 97.27
+    },
+    {
+        "temperature": 29.72,
+        "humidity": 47.51,
+        "pressure": 1004.57,
+        "gas_resistance": 109.12
+    },
+    {
+        "temperature": 29.71,
+        "humidity": 47.43,
+        "pressure": 1004.57,
+        "gas_resistance": 114.1
+    },
+    {
+        "temperature": 29.75,
+        "humidity": 47.36,
+        "pressure": 1004.57,
+        "gas_resistance": 116.81
+    },
+    {
+        "temperature": 29.76,
+        "humidity": 47.35,
+        "pressure": 1004.56,
+        "gas_resistance": 118.12
+    },
+    {
+        "temperature": 29.64,
+        "humidity": 47.75,
+        "pressure": 1004.57,
+        "gas_resistance": 102.76
+    },
+    {
+        "temperature": 29.68,
+        "humidity": 47.51,
+        "pressure": 1004.57,
+        "gas_resistance": 112.72
+    },
+    {
+        "temperature": 29.58,
+        "humidity": 47.81,
+        "pressure": 1004.58,
+        "gas_resistance": 101.21
+    },
+    {
+        "temperature": 29.63,
+        "humidity": 47.56,
+        "pressure": 1004.61,
+        "gas_resistance": 111.82
+    },
+    {
+        "temperature": 29.64,
+        "humidity": 47.47,
+        "pressure": 1004.59,
+        "gas_resistance": 115.52
+    },
+    {
+        "temperature": 29.64,
+        "humidity": 47.44,
+        "pressure": 1004.6,
+        "gas_resistance": 117.63
+    },
+    {
+        "temperature": 29.52,
+        "humidity": 47.82,
+        "pressure": 1004.62,
+        "gas_resistance": 103.2
+    },
+    {
+        "temperature": 29.58,
+        "humidity": 47.62,
+        "pressure": 1004.6,
+        "gas_resistance": 113.1
+    },
+    {
+        "temperature": 29.59,
+        "humidity": 47.55,
+        "pressure": 1004.62,
+        "gas_resistance": 117.38
+    },
+    {
+        "temperature": 29.55,
+        "humidity": 47.52,
+        "pressure": 1004.62,
+        "gas_resistance": 119.64
+    },
+    {
+        "temperature": 29.56,
+        "humidity": 47.53,
+        "pressure": 1004.61,
+        "gas_resistance": 121.2
+    },
+    {
+        "temperature": 29.44,
+        "humidity": 47.93,
+        "pressure": 1004.64,
+        "gas_resistance": 105.54
+    },
+    {
+        "temperature": 29.39,
+        "humidity": 48.06,
+        "pressure": 1004.65,
+        "gas_resistance": 100.24
+    },
+    {
+        "temperature": 29.45,
+        "humidity": 47.83,
+        "pressure": 1004.64,
+        "gas_resistance": 112.57
+    },
+    {
+        "temperature": 29.45,
+        "humidity": 47.74,
+        "pressure": 1004.66,
+        "gas_resistance": 116.56
+    },
+    {
+        "temperature": 29.46,
+        "humidity": 47.7,
+        "pressure": 1004.65,
+        "gas_resistance": 120.16
+    },
+    {
+        "temperature": 29.5,
+        "humidity": 47.7,
+        "pressure": 1004.65,
+        "gas_resistance": 120.85
+    },
+    {
+        "temperature": 29.48,
+        "humidity": 47.67,
+        "pressure": 1004.64,
+        "gas_resistance": 121.64
+    }
+]
