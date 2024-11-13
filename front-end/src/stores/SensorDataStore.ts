@@ -11,7 +11,7 @@ interface SensorData {
 }
 
 const state = reactive({
-  sensorData: {} as Record<number, SensorData[]> // 以感?器 ID ??，存??据
+  sensorData: {} as Record<number, SensorData[]> // 
 });
 
 const fetchSensorData = async (sensorId: number, limitValue: number = 10) => {

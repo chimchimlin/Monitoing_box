@@ -24,14 +24,13 @@
           <GasResistanceChart :sensorData="sensorData"></GasResistanceChart>
         </div>
       </div>
-      
       <p v-if="error" class="error-text">{{ error }}</p>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch, onMounted } from 'vue';
+import { defineComponent, ref, watch, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 import TemperatureChart from '../components/chart/Temperaturechart.vue';
 import HumidityChart from '../components/chart/Humiditychart.vue';
@@ -41,6 +40,7 @@ import SensorList from '../components/data/SensorList.vue';
 import { useRoute } from 'vue-router';
 import type { Monitor } from '@/@types/SensorData.types';
 import { LoadType } from '@/@types/Response.types';
+
 
 interface Sensor {
   id: number;
@@ -67,8 +67,9 @@ export default defineComponent({
     const error = ref<string | null>(null);
     const availableSensors = ref<Sensor[]>([]);
     const selectedSensorIds = ref<number[]>([]);
+    let timerId: NodeJS.Timeout | null = null; // 刷新 儲存
 
-    // 获取可用的传感器
+    // API
     const fetchAvailableSensors = async () => {
       try {
         const response = await axios.get('/api/sensor/sensorList');
@@ -116,10 +117,27 @@ export default defineComponent({
       }
     }, { immediate: true });
 
+    // 定時獲取數據
+    const startTimer = () => {
+      timerId = setInterval(() => {
+        if (sensorId.value) {
+          fetchSensorData(sensorId.value);
+        }
+      }, 5000 + Math.random() * 1000); // 5~6秒
+    };
+
     onMounted(async () => {
       await fetchAvailableSensors();
       if (sensorId.value) {
         fetchSensorData(sensorId.value);
+      }
+      startTimer();
+    });
+
+    // 组件卸载时清除定时器
+    onUnmounted(() => {
+      if (timerId) {
+        clearInterval(timerId);
       }
     });
 

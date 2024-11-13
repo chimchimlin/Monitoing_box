@@ -212,7 +212,7 @@ const handleClose = (key: string, keyPath: string[]) => {
   top: 10px;
   right: 20px;
   z-index: 1000;
-  width: 200px; /* 调整宽度 */
+  width: 200px; 
 }
 
 .card-header {

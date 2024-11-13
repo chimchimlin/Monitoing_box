@@ -1,32 +1,44 @@
 <template>
     <el-form :model="sensorData" label-width="120px" @submit.prevent="handleSubmit">
-      <h2>編輯感測節點</h2>
-      <el-form-item label="感測器 ID:" prop="sensor_id" required>
-        <el-input-number v-model="sensorData.sensor_id" :min="1" />
-      </el-form-item>
-      <el-form-item label="DEV Address:" prop="dev_addr" required>
+    <h2>編輯感測節點</h2>
+    <el-form-item label="感測器名稱:" prop="sensor_name" required>
+        <el-select 
+        v-model="selectedSensorName" 
+        placeholder="請選擇感測器"
+        @change="handleSensorChange"  
+        >
+        <el-option
+            v-for="sensor in sensorStore.state.sensors"
+            :key="sensor.id"
+            :label="sensor.name"
+            :value="sensor.name"
+        />
+        </el-select>
+    </el-form-item>
+    <el-form-item label="DEV Address:" prop="dev_addr" required>
         <el-input v-model="sensorData.dev_addr" />
-      </el-form-item>
-      <el-form-item label="GPS 經度:" prop="gps_longitude" required>
+    </el-form-item>
+    <el-form-item label="GPS 經度:" prop="gps_longitude" required>
         <el-input v-model="sensorData.gps_longitude" />
-      </el-form-item>
-      <el-form-item label="GPS 緯度:" prop="gps_latitude" required>
+    </el-form-item>
+    <el-form-item label="GPS 緯度:" prop="gps_latitude" required>
         <el-input v-model="sensorData.gps_latitude" />
-      </el-form-item>
-      <el-form-item>
+    </el-form-item>
+    <el-form-item>
         <el-button type="primary" native-type="submit" :disabled="isSubmitting">更新感測節點</el-button>
-      </el-form-item>
-      <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-      <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
+    </el-form-item>
+    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+    <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
     </el-form>
-  </template>
+</template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive } from 'vue';
+import { defineComponent, ref, reactive, computed, watch } from 'vue';
 import axios from 'axios';
 import { LoadType } from '@/@types/Response.types';
 import type { AxiosResponse } from 'axios';
 import type { ResultData } from '@/@types/Response.types';
+import sensorStore from '@/stores/sensorStore';
 
 interface EditSensorParams {
     sensor_id: number;
@@ -38,56 +50,76 @@ interface EditSensorParams {
 export default defineComponent({
     name: 'EditSensorForm',
     props: {
-        initialSensorData: {
-            type: Object as () => EditSensorParams,
-            required: true
-        }
+    initialSensorData: {
+        type: Object as () => EditSensorParams,
+        required: true
+    }
     },
     setup(props) {
-        const defaultSensorData = {
+    const defaultSensorData = {
         sensor_id: 0,
         dev_addr: '',
         gps_longitude: '',
         gps_latitude: ''
     };
-        const sensorData = reactive<EditSensorParams>({
+
+    const sensorData = reactive<EditSensorParams>({
         sensor_id: props.initialSensorData?.sensor_id ?? defaultSensorData.sensor_id,
         dev_addr: props.initialSensorData?.dev_addr ?? defaultSensorData.dev_addr,
         gps_longitude: props.initialSensorData?.gps_longitude ?? defaultSensorData.gps_longitude,
         gps_latitude: props.initialSensorData?.gps_latitude ?? defaultSensorData.gps_latitude
-        });
+    });
 
-        const errorMessage = ref('');
-        const successMessage = ref('');
-        const isSubmitting = ref(false);
+    const selectedSensorName = ref(
+        sensorStore.state.sensors.find(sensor => sensor.id === sensorData.sensor_id)?.name || ''
+    );
 
-        const handleSubmit = async () => {
-            errorMessage.value = '';
-            successMessage.value = '';
-            isSubmitting.value = true;
+    const errorMessage = ref('');
+    const successMessage = ref('');
+    const isSubmitting = ref(false);
 
-            try {
-                const result = await editSensor(sensorData);
-                if (result.success) {
-                    successMessage.value = '感測節點更新成功！';
-                } else {
-                    errorMessage.value = result.errorMessage || '更新失敗';
-                }
-            } catch (error) {
-                errorMessage.value = '發生未知錯誤';
-                console.error('Error:', error);
-            } finally {
-                isSubmitting.value = false;
-            }
-        };
+    const handleSensorChange = (sensorName: string) => {
+        const selectedSensor = sensorStore.state.sensors.find(sensor => sensor.name === sensorName);
+        if (selectedSensor) {
+        sensorData.sensor_id = selectedSensor.id;
+        sensorData.dev_addr = selectedSensor.name;
+        sensorData.gps_longitude = selectedSensor.longitude.toString();
+        sensorData.gps_latitude = selectedSensor.latitude.toString();
+        }
+    };
 
-        return {
-            sensorData,
-            errorMessage,
-            successMessage,
-            isSubmitting,
-            handleSubmit
-        };
+    const handleSubmit = async () => {
+        errorMessage.value = '';
+        successMessage.value = '';
+        isSubmitting.value = true;
+
+        try {
+        const result = await editSensor(sensorData);
+        if (result.success) {
+            successMessage.value = '感測節點更新成功！';
+            // 更新 sensorStore 中的感測器列表
+            await sensorStore.fetchSensors(); 
+        } else {
+            errorMessage.value = result.errorMessage || '更新失敗';
+        }
+        } catch (error) {
+        errorMessage.value = '發生未知錯誤';
+        console.error('Error:', error);
+        } finally {
+        isSubmitting.value = false;
+        }
+    };
+
+    return {
+        sensorData,
+        selectedSensorName,
+        errorMessage,
+        successMessage,
+        isSubmitting,
+        handleSubmit,
+        handleSensorChange,
+        sensorStore
+    };
     }
 });
 
