@@ -4,6 +4,7 @@
  */
 
 #include <Wire.h>
+#include <LittleFS.h>
 #include "LoRaWan_APP.h"
 
 #include "src/lib/BME680.h"
@@ -95,14 +96,14 @@ void getBME680Readings()
 
     if (endTime == 0)
     {
-        Serial.println(F("Failed to begin reading :("));
+        Serial.println("[BME680] Failed to begin reading :(");
         int stoptime;
         stoptime = millis();
         errLeds(stoptime);
     }
     if (!bme.endReading())
     {
-        Serial.println(F("Failed to complete reading :("));
+        Serial.println("[BME680] Failed to complete reading :(");
         int stoptime;
         stoptime = millis();
         errLeds(stoptime);
@@ -117,7 +118,8 @@ void getBME680Readings()
 /**
  * Restart ESP32
  */
-void softwareReset() {
+void softwareReset()
+{
     esp_restart();
 }
 
@@ -145,7 +147,8 @@ void errLeds(int stoptime)
 /**
  * 將 float 轉換為 16 進位
  */
-void floatToHex(float value, uint8_t* buffer) {
+void floatToHex(float value, uint8_t* buffer)
+{
     int intValue = *(int*)&value;   // 將 float 轉換為 int 表示
 
     buffer[0] = (intValue >> 24) & 0xFF;
@@ -154,13 +157,54 @@ void floatToHex(float value, uint8_t* buffer) {
     buffer[3] = intValue & 0xFF;
 }
 
+/**
+ * 將資料使用 LittleFS 寫入 ESP32 txt 中
+ */
+void logDataToFile(const char* filename, BME680Data data, float batteryPercent)
+{
+    File file = LittleFS.open(filename, FILE_APPEND);
 
+    if (!file)
+    {
+        Serial.println("[LittleFS] Failed to open file for appending");
+        return;
+    }
+
+    // Format the data as a CSV line
+    file.printf("%f,%f,%f,%f,%f\n", 
+                data.temperature, 
+                data.humidity, 
+                data.pressure, 
+                data.gasResistance, 
+                batteryPercent);
+
+    file.close();
+
+    Serial.println("[LittleFS] Data logged successfully");
+}
 
 
 void setup()
 {
     Serial.begin(115200);
     Serial.println("----- start init -----");
+
+
+    // LittleFS
+#if (ENABLE_WRITE_TO_TXT)
+    Serial.println("[LittleFS] Initialize LittleFS");
+
+    if (!LittleFS.begin(true)) 
+    {
+        int stoptime;
+        stoptime = millis();
+        Serial.println("[LittleFS] Failed to mount LittleFS");
+        errLeds(stoptime);
+    }
+
+    Serial.println("[LittleFS] LittleFS mounted successfully");
+#endif
+
 
     // LED pin
     pinMode(RUNNING_LED, OUTPUT);
@@ -171,21 +215,22 @@ void setup()
     digitalWrite(PANIC_LED, LOW);
 
 
-    Serial.println("Initialize LoRaWan_APP");
+    Serial.println("[LoRa] Initialize LoRaWan_APP");
     Mcu.begin();
     deviceState = DEVICE_STATE_INIT;
 
 
-    Serial.println("Initialize sensor");
+    Serial.println("[BME680] Initialize sensor");
     bme.setSPIPins(BME_SDA_PIN, BME_SCL_PIN);
     memset(payload, 0xFF, sizeof(payload));     // Default value
 
 
     // Init BME680 sensor
     if (!bme.begin())
-    {   int stoptime;
-        stoptime=millis();
-        Serial.println(F("Could not find a valid BME680 sensor, check wiring!"));
+    {
+        int stoptime;
+        stoptime = millis();
+        Serial.println("[BME680] Could not find a valid BME680 sensor, check wiring!");
         errLeds(stoptime);
     }
 
@@ -199,7 +244,7 @@ void setup()
     delay(50);
     getBME680Readings();    // Test get sensor data
 
-    Serial.println("Successfully initialized sensor");
+    Serial.println("[BME680] Successfully initialized sensor");
 
 
     Serial.println("----- init ok -----");
@@ -231,6 +276,11 @@ void loop()
         int battery_percent = heltec_battery_percent(vbat);
 
         getBME680Readings();    // Get sensor data
+
+
+#if (ENABLE_WRITE_TO_TXT)
+        logDataToFile(TXT_FILE_PATH, sensorData, battery_percent);  // Log to file
+#endif
 
 
 #if (DEBUG_MODE)

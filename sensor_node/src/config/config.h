@@ -53,4 +53,16 @@ typedef struct
 #define ERROR_LOOP_TIME 30000       // 錯誤重啟 PANIC_LED 閃爍時間
 
 
+/**
+ * 是否啟用將感測數據寫入 txt 文件。
+ * 0: disable, 1: enable
+ */
+#define ENABLE_WRITE_TO_TXT 1
+
+/**
+ * LittleFS 寫入 ESP32 的 txt 路徑
+ */
+#define TXT_FILE_PATH "/sensor_data.txt"
+
+
 #endif /* CONFIG_H */
