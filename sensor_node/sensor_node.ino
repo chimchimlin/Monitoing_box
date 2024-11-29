@@ -4,12 +4,12 @@
  */
 
 #include <Wire.h>
-#include <LittleFS.h>
 #include "LoRaWan_APP.h"
 
 #include "src/lib/BME680.h"
 #include "src/lib/heltec_vbat.h"
 #include "src/config/config.h"
+#include "src/lib/model.h"
 
 
 /* OTAA para*/
@@ -84,7 +84,7 @@ BME680Data sensorData;
 uint8_t payload[SENSOR_DATA_SIZE];      // Sensor data
 float vbat = -1;                        // Battery voltage
 
-
+double output[2];
 void getBME680Readings()
 {
     digitalWrite(DATA_LED, HIGH);
@@ -96,14 +96,14 @@ void getBME680Readings()
 
     if (endTime == 0)
     {
-        Serial.println("[BME680] Failed to begin reading :(");
+        Serial.println(F("Failed to begin reading :("));
         int stoptime;
         stoptime = millis();
         errLeds(stoptime);
     }
     if (!bme.endReading())
     {
-        Serial.println("[BME680] Failed to complete reading :(");
+        Serial.println(F("Failed to complete reading :("));
         int stoptime;
         stoptime = millis();
         errLeds(stoptime);
@@ -113,13 +113,14 @@ void getBME680Readings()
     sensorData.pressure = bme.pressure / 100.0;
     sensorData.humidity = bme.humidity;
     sensorData.gasResistance = bme.gas_resistance / 1000.0;
+    double input[3]={(double)sensorData.temperature,(double)sensorData.humidity ,(double)sensorData.gasResistance};
+    score(input,output);
 }
 
 /**
  * Restart ESP32
  */
-void softwareReset()
-{
+void softwareReset() {
     esp_restart();
 }
 
@@ -147,8 +148,7 @@ void errLeds(int stoptime)
 /**
  * 將 float 轉換為 16 進位
  */
-void floatToHex(float value, uint8_t* buffer)
-{
+void floatToHex(float value, uint8_t* buffer) {
     int intValue = *(int*)&value;   // 將 float 轉換為 int 表示
 
     buffer[0] = (intValue >> 24) & 0xFF;
@@ -157,54 +157,13 @@ void floatToHex(float value, uint8_t* buffer)
     buffer[3] = intValue & 0xFF;
 }
 
-/**
- * 將資料使用 LittleFS 寫入 ESP32 txt 中
- */
-void logDataToFile(const char* filename, BME680Data data, float batteryPercent)
-{
-    File file = LittleFS.open(filename, FILE_APPEND);
 
-    if (!file)
-    {
-        Serial.println("[LittleFS] Failed to open file for appending");
-        return;
-    }
-
-    // Format the data as a CSV line
-    file.printf("%f,%f,%f,%f,%f\n", 
-                data.temperature, 
-                data.humidity, 
-                data.pressure, 
-                data.gasResistance, 
-                batteryPercent);
-
-    file.close();
-
-    Serial.println("[LittleFS] Data logged successfully");
-}
 
 
 void setup()
 {
     Serial.begin(115200);
     Serial.println("----- start init -----");
-
-
-    // LittleFS
-#if (ENABLE_WRITE_TO_TXT)
-    Serial.println("[LittleFS] Initialize LittleFS");
-
-    if (!LittleFS.begin(true)) 
-    {
-        int stoptime;
-        stoptime = millis();
-        Serial.println("[LittleFS] Failed to mount LittleFS");
-        errLeds(stoptime);
-    }
-
-    Serial.println("[LittleFS] LittleFS mounted successfully");
-#endif
-
 
     // LED pin
     pinMode(RUNNING_LED, OUTPUT);
@@ -215,22 +174,21 @@ void setup()
     digitalWrite(PANIC_LED, LOW);
 
 
-    Serial.println("[LoRa] Initialize LoRaWan_APP");
+    Serial.println("Initialize LoRaWan_APP");
     Mcu.begin();
     deviceState = DEVICE_STATE_INIT;
 
 
-    Serial.println("[BME680] Initialize sensor");
+    Serial.println("Initialize sensor");
     bme.setSPIPins(BME_SDA_PIN, BME_SCL_PIN);
     memset(payload, 0xFF, sizeof(payload));     // Default value
 
 
     // Init BME680 sensor
     if (!bme.begin())
-    {
-        int stoptime;
-        stoptime = millis();
-        Serial.println("[BME680] Could not find a valid BME680 sensor, check wiring!");
+    {   int stoptime;
+        stoptime=millis();
+        Serial.println(F("Could not find a valid BME680 sensor, check wiring!"));
         errLeds(stoptime);
     }
 
@@ -244,7 +202,7 @@ void setup()
     delay(50);
     getBME680Readings();    // Test get sensor data
 
-    Serial.println("[BME680] Successfully initialized sensor");
+    Serial.println("Successfully initialized sensor");
 
 
     Serial.println("----- init ok -----");
@@ -278,11 +236,6 @@ void loop()
         getBME680Readings();    // Get sensor data
 
 
-#if (ENABLE_WRITE_TO_TXT)
-        logDataToFile(TXT_FILE_PATH, sensorData, battery_percent);  // Log to file
-#endif
-
-
 #if (DEBUG_MODE)
         Serial.printf("Temperature = %f ºC \n", sensorData.temperature);
         Serial.printf("Humidity = %f % \n", sensorData.humidity);
@@ -299,7 +252,9 @@ void loop()
         floatToHex(sensorData.humidity, payload + 4);           // 轉換濕度
         floatToHex(sensorData.pressure, payload + 8);           // 轉換氣壓
         floatToHex(sensorData.gasResistance, payload + 12);     // 轉換氣體阻抗
-        floatToHex((float)battery_percent, payload + 16);       // 轉換剩餘電池電量%數
+        payload[16]=battery_percent;                            // 電池電量儲存
+        if(output[0]>output[1]){payload[17]=0;}                 // 火災判斷
+        else if(output[1]>output[0]){payload[17]=1;}            
 
 
 #if (DEBUG_MODE)
@@ -331,9 +286,14 @@ void loop()
         }
         Serial.println();
 
-        Serial.print("Battery Percent (hex): ");
-        for (int i = 16; i < 20; ++i) {
-            Serial.print(payload[i], HEX);
+        Serial.print("Battery Percent : ");
+        for (int i = 16; i < 17; ++i) {
+            Serial.print(payload[i]);
+            // Serial.print(" ");
+        }
+        Serial.print("Fire Predict : ");
+        for (int i = 17; i < 18; ++i) {
+            Serial.print(payload[i]);
             // Serial.print(" ");
         }
 
@@ -341,7 +301,7 @@ void loop()
         Serial.println("--------------");
 #endif
 
-        // Send hex payload
+        // Send  payload
         prepareTxFrame(payload);
         LoRaWAN.send();
 
