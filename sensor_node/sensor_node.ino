@@ -303,7 +303,7 @@ void loop()
         floatToHex(sensorData.humidity, payload + 4);           // 轉換濕度
         floatToHex(sensorData.pressure, payload + 8);           // 轉換氣壓
         floatToHex(sensorData.gasResistance, payload + 12);     // 轉換氣體阻抗
-        payload[16]==battery_percent;                           // 儲存剩餘電池電量%數
+        payload[16]=battery_percent;                           // 儲存剩餘電池電量%數
         if(output[0]>output[1]){                                // 火災判斷
             payload[17]=0;
             }                
@@ -311,7 +311,7 @@ void loop()
             payload[17]=1;
             }  
         else if(output[1]==output[0]){
-            if (input[2]>36){
+            if (sensorData.gasResistance>36){
                 payload[17]=0;
             }
             else {
