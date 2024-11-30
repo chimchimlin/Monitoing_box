@@ -310,7 +310,7 @@ void loop()
         else if(output[1]>output[0]){
             payload[17]=1;
             }  
-        else if (output[1]=output[0]){
+        else if(output[1]==output[0]){
             if (input[2]>36){
                 payload[17]=0;
             }
