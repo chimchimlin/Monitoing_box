@@ -40,7 +40,7 @@ typedef struct
     float gasResistance;
 } BME680Data;
 
-#define SENSOR_DATA_SIZE 20     // Sensor data size to be sent
+#define SENSOR_DATA_SIZE 18     // Sensor data size to be sent
 
 
 /**

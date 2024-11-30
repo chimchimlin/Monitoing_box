@@ -1,11 +1,11 @@
 #include <string.h>
 
-void add_vectors(double *v1, double *v2, int size, double *result) {
+void add_vectors(double *v1, double *v2, int size, double *result) {//兩陣列相加
     for(int i = 0; i < size; ++i)
         result[i] = v1[i] + v2[i];
 }
 
-void mul_vector_number(double *v1, double num, int size, double *result) {
+void mul_vector_number(double *v1, double num, int size, double *result) {//將累加後的分數進行標準化
     for(int i = 0; i < size; ++i)
         result[i] = v1[i] * num;
 }
