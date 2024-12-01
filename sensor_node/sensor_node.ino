@@ -349,9 +349,17 @@ void loop()
         }
         Serial.println();
 
-        Serial.print("Battery Percent (hex): ");
-        for (int i = 16; i < 20; ++i) {
-            Serial.print(payload[i], HEX);
+        Serial.print("Battery Percent : ");
+        for (int i = 16; i < 17; ++i) {
+            Serial.print(payload[i]);
+            // Serial.print(" ");
+        }
+
+        Serial.println();
+
+        Serial.print("Fire Predict: ");
+        for (int i = 17; i < 18; ++i) {
+            Serial.print(payload[i]);
             // Serial.print(" ");
         }
 
@@ -359,7 +367,7 @@ void loop()
         Serial.println("--------------");
 #endif
 
-        // Send hex payload
+        // Send  payload
         prepareTxFrame(payload);
         LoRaWAN.send();
 
