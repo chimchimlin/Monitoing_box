@@ -13,7 +13,6 @@
 #include "src/lib/model.h"
 
 
-
 /* OTAA para*/
 uint8_t devEui[] = {0x22, 0x32, 0x33, 0x00, 0x00, 0x88, 0x88, 0x02};
 uint8_t appEui[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -85,8 +84,9 @@ BME680 bme(Wire);
 BME680Data sensorData;
 uint8_t payload[SENSOR_DATA_SIZE];      // Sensor data
 float vbat = -1;                        // Battery voltage
-
 double output[2];
+
+
 void getBME680Readings()
 {
     digitalWrite(DATA_LED, HIGH);
@@ -115,8 +115,14 @@ void getBME680Readings()
     sensorData.pressure = bme.pressure / 100.0;
     sensorData.humidity = bme.humidity;
     sensorData.gasResistance = bme.gas_resistance / 1000.0;
-    double input[3]={(double)sensorData.temperature,(double)sensorData.humidity ,(double)sensorData.gasResistance};
-    score(input,output);
+
+    double input[3] = {
+        (double)sensorData.temperature,
+        (double)sensorData.humidity,
+        (double)sensorData.gasResistance
+    };
+
+    score(input, output);
 }
 
 /**
@@ -303,20 +309,16 @@ void loop()
         floatToHex(sensorData.humidity, payload + 4);           // 轉換濕度
         floatToHex(sensorData.pressure, payload + 8);           // 轉換氣壓
         floatToHex(sensorData.gasResistance, payload + 12);     // 轉換氣體阻抗
-        payload[16]=battery_percent;                           // 儲存剩餘電池電量%數
-        if(output[0]>output[1]){                                // 火災判斷
-            payload[17]=0;
-            }                
-        else if(output[1]>output[0]){
-            payload[17]=1;
-            }  
-        else if(output[1]==output[0]){
-            if (sensorData.gasResistance>36){
-                payload[17]=0;
-            }
-            else {
-                payload[17]=1;
-            }
+        payload[16] = battery_percent;                          // 儲存剩餘電池電量%數
+
+        // 火災判斷
+        if (output[1] == output[0])
+        {
+            payload[17] = (sensorData.gasResistance > 36) ? 0 : 1;
+        }
+        else
+        {
+            payload[17] = (output[0] > output[1]) ? 0 : 1;
         }
 
 
