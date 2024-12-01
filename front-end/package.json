@@ -14,7 +14,7 @@
         "chart.js": "^4.4.3",
         "element-plus": "^2.8.3",
         "leaflet": "^1.9.4",
-        "pinia": "^2.1.7",
+        "pinia": "^2.2.8",
         "typescript": "^5.5.3",
         "vue": "^3.4.27",
         "vue-chartjs": "^5.3.1",
