@@ -1,83 +1,57 @@
 <template>
   <el-container>
-    <el-aside width="200px">
-      <el-menu
-        default-active="2"
-        class="el-menu-vertical-demo"
-        @open="handleOpen"
-        @close="handleClose   
-"
-      >
-        <el-menu-item index="1">
-          <el-icon><icon-menu /> </el-icon>
-          <span>首頁</span>
-        </el-menu-item>
-        <el-sub-menu index="2"> 
-          <template #title>
-            <el-icon><document /></el-icon>
-            <span>選擇感測器</span>
-          </template>
-          <el-menu-item 
-  v-for="(sensor, index) in sensorStore.state.sensors" 
-  :key="sensor.id" 
-  @click="selectSensor(sensorStore.state.sensors[index] as Sensor)" 
->
-  {{ sensor.name }}
-</el-menu-item>
-        </el-sub-menu>
-        <el-sub-menu index="3">
-          <template #title>
-            <el-icon><location /></el-icon>
-            <span>設定</span>
-          </template>
-          <el-menu-item index="4-1">管理員</el-menu-item>
-          <el-menu-item index="4-2">版本</el-menu-item>
-        </el-sub-menu>
-        <el-menu-item index="4" >
-          <el-icon><document /></el-icon>
-          <span>登入/登出</span>
-        </el-menu-item>
-      </el-menu>
-    </el-aside>
-
     <el-main>
-    <div id="map" style="height: 680px;"></div>
-    <el-card v-if="isMapInitialized" class="fire-sensors-control">
-      <template #header>
-        <div class="card-header">
-          <span v-if="fireSensors.length > 0" class="fire-alert-title">火災警報</span>
-          <span v-else>目前無火災警報</span>
-        </div>
-      </template>
-      <ul v-if="fireSensors.length > 0" class="fire-alert-list">
-        <li v-for="sensor in fireSensors" :key="sensor.id">{{ sensor.name }}</li>
-      </ul>
-    </el-card>
-  </el-main>
+      <div id="map" style="height: 680px;"></div>
+      <el-card v-if="isMapInitialized" class="fire-sensors-control">
+        <template #header>
+          <div class="card-header">
+            <span v-if="fireSensors.length > 0" class="fire-alert-title">火災警報</span>
+            <span v-else>目前無火災警報</span>
+          </div>
+        </template>
+
+        <ul v-if="fireSensors.length > 0" class="fire-alert-list">
+          <li v-for="sensor in fireSensors" :key="sensor.id">{{ sensor.name }}</li>
+        </ul>
+
+      </el-card>
+    </el-main>
   </el-container>
 </template>
+
+
 <script lang="ts">
 import { defineComponent, onMounted, watch, ref, computed } from 'vue';
 import L from 'leaflet';
 import { useRouter } from 'vue-router';
 import sensorStore from '../stores/sensorStore';
 import sensorDataStore from '../stores/SensorDataStore'
-import type { Sensor } from '../stores/sensorStore'; 
 
 export default defineComponent({
 
 
-  name: 'MapComponent', 
+  name: 'MapComponent',
   setup() {
     const router = useRouter();
     let map: L.Map;
     const isMapInitialized = ref(false);
 
+    onMounted(async () => {
+      console.log('Map component mounted');
+      await sensorStore.fetchSensors();
+      initializeMap();
+    });
 
-    const selectSensor = (sensor: Sensor) => { // 指定 sensor 参数类型
-      console.log('選擇感測器：', sensor.name);
-      router.push(`/Sensor/${sensor.id}`); 
-    };
+    watch(
+      () => sensorStore.state.sensors,
+      () => {
+        console.log('Sensors updated, recomputing markers');
+        addMarkers();
+      },
+      { deep: true }
+    );
+
+
     const fireSensors = computed(() => {
       console.log('Computing fire sensors:', sensorStore.state.sensors.filter(sensor => sensor.is_fire));
       return sensorStore.state.sensors.filter(sensor => sensor.is_fire);
@@ -131,10 +105,10 @@ export default defineComponent({
           console.log(`Adding marker at: ${sensor.latitude}, ${sensor.longitude}, is_fire: ${sensor.is_fire}`);
 
           await sensorDataStore.fetchSensorData(sensor.id, 1);
-          const latestData = sensorDataStore.state.sensorData[sensor.id]?.[0]; 
+          const latestData = sensorDataStore.state.sensorData[sensor.id]?.[0];
 
-          const fireStatusStyle = sensor.is_fire 
-            ? 'color: red; border: 2px solid red; padding: 2px 5px; display: inline-block;font-weight: bold;' 
+          const fireStatusStyle = sensor.is_fire
+            ? 'color: red; border: 2px solid red; padding: 2px 5px; display: inline-block;font-weight: bold;'
             : 'color: green;font-weight: bold;';
 
           const popupContent = latestData
@@ -166,37 +140,10 @@ export default defineComponent({
       }
     };
 
-    onMounted(async () => {
-      console.log('Map component mounted');
-      await sensorStore.fetchSensors();
-      initializeMap();
-    });
-
-    watch(
-      () => sensorStore.state.sensors,
-      () => {
-        console.log('Sensors updated, recomputing markers');
-        addMarkers();
-      },
-      { deep: true }
-    );
-
-    const handleOpen = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-}
-
-const handleClose = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-}
-
-
 
     return {
-      handleOpen,
-      handleClose,
       isMapInitialized,
       fireSensors,
-      selectSensor,
       sensorStore
     };
   }
@@ -212,7 +159,7 @@ const handleClose = (key: string, keyPath: string[]) => {
   top: 10px;
   right: 20px;
   z-index: 1000;
-  width: 200px; 
+  width: 200px;
 }
 
 .card-header {
@@ -222,7 +169,8 @@ const handleClose = (key: string, keyPath: string[]) => {
 }
 
 .fire-alert-title {
-  color: #f56c6c; /* 使用 Element UI 的红色 */
+  color: #f56c6c;
+  /* 使用 Element UI 的红色 */
   font-weight: bold;
 }
 
