@@ -125,6 +125,7 @@ export class MQTT {
                     ${sensorData.humidity}, 
                     ${sensorData.pressure}, 
                     ${sensorData.gas_resistance}, 
+                    ${sensorData.is_fire === 1 ? 1 : 0}, 
                     ${sensorData.battery}
                 );
             `;
