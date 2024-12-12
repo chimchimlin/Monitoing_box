@@ -210,7 +210,7 @@ export class MQTT {
         floatArray.push(batteryLevel);
 
         // 解析 是否火災
-        const fireHex = hexArray[16];
+        const fireHex = hexArray[17];
         const fire = parseInt(fireHex, 16) === 1 ? 1 : 0;
         floatArray.push(fire);
 
