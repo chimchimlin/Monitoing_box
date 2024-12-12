@@ -29,15 +29,15 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, watch, onMounted, onUnmounted } from 'vue';
+<script setup lang="ts">
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
+import { useRoute } from 'vue-router';
 import TemperatureChart from '../components/chart/Temperaturechart.vue';
 import HumidityChart from '../components/chart/Humiditychart.vue';
 import PressureChart from '../components/chart/Pressurechart.vue';
 import GasResistanceChart from '../components/chart/Gas_Resistancechart.vue';
 import SensorList from '../components/data/SensorList.vue';
-import { useRoute } from 'vue-router';
 import type { Monitor } from '@/@types/SensorData.types';
 import { LoadType } from '@/@types/Response.types';
 
@@ -51,111 +51,132 @@ interface Sensor {
   gps_latitude: string;
 }
 
-export default defineComponent({
-  components: {
-    SensorList,
-    TemperatureChart,
-    HumidityChart,
-    PressureChart,
-    GasResistanceChart 
-  },
-  setup() {
-    const route = useRoute();
-    const sensorId = ref<number | null>(Number(route.params.id));
-    const sensorData = ref<Monitor[]>([]);
-    const loading = ref(true);
-    const error = ref<string | null>(null);
-    const availableSensors = ref<Sensor[]>([]);
-    const selectedSensorIds = ref<number[]>([]);
-    let timerId: NodeJS.Timeout | null = null; // 刷新 儲存
+// 路線和初始狀態
+const route = useRoute();
+const sensorId = ref<number | null>(Number(route.params.id));
+const sensorData = ref<Monitor[]>([]);
+const loading = ref(true);
+const error = ref<string | null>(null);
+const availableSensors = ref<Sensor[]>([]);
+const selectedSensorIds = ref<number[]>([]);
+const lastUpdateTimestamp = ref<string | null>(null);
 
-    // API
-    const fetchAvailableSensors = async () => {
-      try {
-        const response = await axios.get('/api/sensor/sensorList');
-        if (response.data.loadType === LoadType.SUCCEED) {
-          availableSensors.value = response.data.data;
-          selectedSensorIds.value = availableSensors.value.map(sensor => sensor.id);
-        } else {
-          console.warn('Failed to fetch sensor list. Load type:', response.data.loadType);
-        }
-      } catch (err) {
-        console.error('Error fetching sensor list:', err);
-        error.value = 'Failed to fetch sensor list';
-      }
-    };
 
-    // 根据 sensorId 获取传感器数据
-    const fetchSensorData = async (id: number) => {
-      loading.value = true;
-      error.value = null;
-      sensorData.value = [];
-      
-      try {
-        const response = await axios.get('/api/sensor/sensorData', { params: { sensor_id: id, limit_value: 100 } });
-        if (response.data.loadType === LoadType.SUCCEED) {
-          sensorData.value = response.data.data.map((item: Monitor) => ({
-            ...item,
-            sensorId: id
-          }));
-        } else {
-          console.warn(`Failed to fetch data for sensor ${id}. Load type: ${response.data.loadType}`);
-        }
-      } catch (err) {
-        console.error(`Error fetching data for sensor ${id}:`, err);
-        error.value = `Failed to fetch data for sensor ${id}`;
-      } finally {
-        loading.value = false;
-      }
-    };
-
-    // 监听路由参数变化
-    watch(() => route.params.id, (newId) => {
-      sensorId.value = Number(newId);
-      if (sensorId.value) {
-        fetchSensorData(sensorId.value);
-      }
-    }, { immediate: true });
-
-    // 定時獲取數據
-    const startTimer = () => {
-      timerId = setInterval(() => {
-        if (sensorId.value) {
-          fetchSensorData(sensorId.value);
-        }
-      }, 5000 + Math.random() * 1000); // 5~6秒
-    };
-
-    onMounted(async () => {
-      await fetchAvailableSensors();
-      if (sensorId.value) {
-        fetchSensorData(sensorId.value);
-      }
-      startTimer();
-    });
-
-    // 组件卸载时清除定时器
-    onUnmounted(() => {
-      if (timerId) {
-        clearInterval(timerId);
-      }
-    });
-
-    return {
-      sensorData,
-      loading,
-      error,
-      availableSensors,
-      onSensorSelected: (id: number) => {
-        sensorId.value = id;
-        fetchSensorData(id);
-      },
-      TemperatureChart,
-      HumidityChart,
-      PressureChart,
-      GasResistanceChart
-    };
+// 取得可用感測器
+const fetchAvailableSensors = async () => {
+  try {
+    const response = await axios.get('/api/sensor/sensorList');
+    if (response.data.loadType === LoadType.SUCCEED) {
+      availableSensors.value = response.data.data;
+      selectedSensorIds.value = availableSensors.value.map(sensor => sensor.id);
+    } else {
+      console.warn('Failed to fetch sensor list. Load type:', response.data.loadType);
+    }
+  } catch (err) {
+    console.error('Error fetching sensor list:', err);
+    error.value = 'Failed to fetch sensor list';
   }
+};
+
+// 取得感測器數據
+const fetchSensorData = async (id: number, options: { 
+  incremental?: boolean 
+} = {}) => {
+  try {
+    const response = await axios.get('/api/sensor/sensorData', { 
+      params: { 
+        sensor_id: id, 
+        limit_value: 100,
+        // 如果是增量更新，最后一次更新
+        ...(options.incremental && lastUpdateTimestamp.value 
+          ? { last_updated: lastUpdateTimestamp.value } 
+          : {})
+      } 
+    });
+
+    if (response.data.loadType === LoadType.SUCCEED) {
+      const newData = response.data.data.map((item: Monitor) => ({
+        ...item,
+        sensorId: id
+      }));
+
+      if (options.incremental) {
+        // 增量更新：將新數據添加到現有数据的前面
+        sensorData.value = [
+          ...newData, 
+          ...sensorData.value
+        ];
+      } else {
+        //全部數據更新
+        sensorData.value = newData;
+      }
+
+      // 更新最后更新時間點
+      if (newData.length > 0) {
+        lastUpdateTimestamp.value = newData[0].created_at;
+      }
+    }
+  } catch (err) {
+    console.error(`Error fetching data for sensor ${id}:`, err);
+  }
+};
+
+
+// 感測器選擇處理程序
+const onSensorSelected = (id: number) => {
+  sensorId.value = id;
+    // 清空之前的傳感器數據
+  sensorData.value = [];
+  fetchSensorData(id);
+};
+
+
+
+// 觀察路由參數變化
+watch(() => route.params.id, (newId) => {
+  sensorId.value = Number(newId);
+  if (sensorId.value) {
+    fetchSensorData(sensorId.value);
+  }
+}, { immediate: true });
+
+//定时器函数
+const createSmartTimer = (id: number) => {
+  let timeoutId: NodeJS.Timeout | null = null;
+
+  const scheduleNextUpdate = () => {
+    
+    const RefreshTime = 5000 ; //固定5秒
+    
+    timeoutId = setTimeout(async () => {
+      await fetchSensorData(id, { incremental: true });
+      scheduleNextUpdate();
+    }, RefreshTime);
+  };
+
+  scheduleNextUpdate();
+
+  return () => {
+    if (timeoutId) clearTimeout(timeoutId);
+  };
+};
+
+// 修改生命周期
+let stopTimer: (() => void) | null = null;
+
+onMounted(async () => {
+  await fetchAvailableSensors();
+  if (sensorId.value) {
+    // 初始加载全部數據
+    await fetchSensorData(sensorId.value);
+    
+    // 定时器
+    stopTimer = createSmartTimer(sensorId.value);
+  }
+});
+
+onUnmounted(() => {
+    if (stopTimer) stopTimer();
 });
 </script>
 

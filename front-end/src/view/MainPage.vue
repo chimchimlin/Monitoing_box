@@ -95,6 +95,7 @@ const triggerMenu = () => {
 
 const selectSensor = (sensor: Sensor) => {
   console.log('選擇感測器：', sensor.name);
+  sensorStore.setCurrentSensorById(sensor.id);
   router.push(`/Sensor/${sensor.id}`);
 };
 

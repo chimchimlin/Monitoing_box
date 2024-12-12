@@ -54,12 +54,18 @@ const setCurrentSensorById = (id: number) => {
   const foundSensor = state.sensors.find(sensor => sensor.id === id);
   if (foundSensor) {
     console.log('Found sensor:', foundSensor);
-    currentSensor.value = { ...foundSensor }; // 創建一個淺拷貝
+    currentSensor.value = { ...foundSensor }; // 
   } else {
     console.error('No sensor found with the id:', id);
     currentSensor.value = null;
   }
 };
+
+const resetSensorData = () => {
+  state.sensors = []; // 清空感測器陣列
+  currentSensor.value = null; // 重置當前選中的感測器
+};
+
 
 const updateCurrentSensor = () => {
   if (currentSensor.value) {
@@ -72,7 +78,8 @@ const updateCurrentSensor = () => {
 
 const turnOffAlarm = async (sensorId: number) => {
   try {
-    const result = await axios.post(`/api/sensor/closeFireNotify`,sensorId);
+    const result = await axios.post(`/api/sensor/closeFireNotify`, { sensor_id: sensorId });
+    
     if (result.data.loadType === LoadType.SUCCEED) {
       // 更新該感測器的 is_fire 狀態
       state.sensors = state.sensors.map(sensor => 
@@ -81,19 +88,24 @@ const turnOffAlarm = async (sensorId: number) => {
       console.log('警報已關閉');
       // 更新當前選中的感測器
       updateCurrentSensor();
+      
+      return {
+        success: true
+      };
     }
     else if (result.data.loadType === LoadType.QUERY_FAILED) {
       console.log('有誤');
       return {
-          success: false,
-          errorMessage: '參數錯誤'
+        success: false,
+        errorMessage: '參數錯誤'
       };
-    
-  }
-
+    }
   } catch (error) {
     console.error('Error turning off alarm:', error);
-    throw error;
+    return {
+      success: false,
+      errorMessage: error instanceof Error ? error.message : '未知錯誤'
+    };
   }
 };
 
@@ -108,6 +120,7 @@ export default {
   currentSensor,
   fetchSensors,
   setCurrentSensorById,
+  resetSensorData,
   turnOffAlarm,
   updateCurrentSensor
 };

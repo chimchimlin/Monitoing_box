@@ -1,4 +1,3 @@
-// src/stores/sensorDataStore.ts
 import { reactive } from 'vue';
 import axios from 'axios';
 
