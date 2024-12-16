@@ -7,6 +7,8 @@ import type { ResultData } from '@/@types/Response.types';
 export interface Sensor {
   id: number;
   name: string;
+  dev_addr: string; 
+  description: string;  // 保留 description 欄位
   latitude: number;
   longitude: number;
   is_fire: boolean;
@@ -27,18 +29,18 @@ const fetchSensors = async () => {
     if (responseData && Array.isArray(responseData.data)) {
       state.sensors = responseData.data.map((sensor: any) => ({
         id: sensor.id,
-        name: sensor.dev_addr || 'Unknown',
+        name: sensor.description || 'Unknown',  // description 作為顯示名稱
+        dev_addr:sensor.dev_addr,
+        description: sensor.description || '',   // 保存原始 description
         latitude: parseFloat(sensor.gps_latitude) || 0,
         longitude: parseFloat(sensor.gps_longitude) || 0,
         is_fire: sensor.is_fire || false,
         last_firetime: sensor.last_firetime || ''
       }));
       
-      // 如果有感測器數據但還沒有選擇當前感測器，就選擇第一個
       if (state.sensors.length > 0 && !currentSensor.value) {
         setCurrentSensorById(state.sensors[0].id);
       } else if (currentSensor.value) {
-        // 更新當前選中的感測器數據
         updateCurrentSensor();
       }
     } else {
@@ -54,7 +56,7 @@ const setCurrentSensorById = (id: number) => {
   const foundSensor = state.sensors.find(sensor => sensor.id === id);
   if (foundSensor) {
     console.log('Found sensor:', foundSensor);
-    currentSensor.value = { ...foundSensor }; // 
+    currentSensor.value = { ...foundSensor };
   } else {
     console.error('No sensor found with the id:', id);
     currentSensor.value = null;
@@ -62,10 +64,9 @@ const setCurrentSensorById = (id: number) => {
 };
 
 const resetSensorData = () => {
-  state.sensors = []; // 清空感測器陣列
-  currentSensor.value = null; // 重置當前選中的感測器
+  state.sensors = [];
+  currentSensor.value = null;
 };
-
 
 const updateCurrentSensor = () => {
   if (currentSensor.value) {
@@ -81,17 +82,12 @@ const turnOffAlarm = async (sensorId: number) => {
     const result = await axios.post(`/api/sensor/closeFireNotify`, { sensor_id: sensorId });
     
     if (result.data.loadType === LoadType.SUCCEED) {
-      // 更新該感測器的 is_fire 狀態
       state.sensors = state.sensors.map(sensor => 
         sensor.id === sensorId ? { ...sensor, is_fire: false } : sensor
       );
       console.log('警報已關閉');
-      // 更新當前選中的感測器
       updateCurrentSensor();
-      
-      return {
-        success: true
-      };
+      return { success: true };
     }
     else if (result.data.loadType === LoadType.QUERY_FAILED) {
       console.log('有誤');
@@ -109,7 +105,6 @@ const turnOffAlarm = async (sensorId: number) => {
   }
 };
 
-// 監聽 sensors 數組的變化
 watch(() => state.sensors, (newSensors) => {
   console.log('Sensors updated:', newSensors);
   updateCurrentSensor();

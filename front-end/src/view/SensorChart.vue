@@ -140,7 +140,7 @@ watch(() => route.params.id, (newId) => {
   }
 }, { immediate: true });
 
-//定时器函数
+//定時器函数
 const createSmartTimer = (id: number) => {
   let timeoutId: NodeJS.Timeout | null = null;
 

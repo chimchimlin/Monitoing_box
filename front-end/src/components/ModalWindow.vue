@@ -8,29 +8,19 @@
     </div>
   </template>
   
-  <script lang="ts">
-  import { defineComponent } from 'vue';
+  <script setup lang="ts">
+  const props = defineProps<{
+  isOpen: boolean;
+  title?: string;
+  }>();
   
-  export default defineComponent({
-    name: 'ModalWindow',
-    props: {
-      isOpen   
-  : {
-        type: Boolean,
-        required: true
-      },
-      title: { 
-        type: String,
-        default: '' 
-      }
-    },
-    emits: ['close'],
-    methods: {
-      close() {
-        this.$emit('close');
-      }
-    }
-  });
+  const emit = defineEmits<{
+    close: []
+  }>();
+  
+  const close = () => {
+    emit('close');
+  };
   </script>
 
 <style scoped>

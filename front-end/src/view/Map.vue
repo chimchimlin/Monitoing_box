@@ -11,7 +11,7 @@
         </template>
 
         <ul v-if="fireSensors.length > 0" class="fire-alert-list">
-          <li v-for="sensor in fireSensors" :key="sensor.id">{{ sensor.name }}</li>
+          <li v-for="sensor in fireSensors" :key="sensor.dev_addr">{{ sensor.dev_addr }}</li>
         </ul>
 
       </el-card>
@@ -99,7 +99,7 @@ const addMarkers = async () => {
       const popupContent = latestData
         ? `
           <div style="font-family: Arial, sans-serif;">
-            <h3 style="margin-bottom: 10px;">Sensor: ${sensor.name}</h3>
+            <h3 style="margin-bottom: 10px;">Sensor: ${sensor.dev_addr}</h3>
             <p><strong>溫度:</strong> ${latestData.temperature}°C</p>
             <p><strong>濕度:</strong> ${latestData.humidity}%</p>
             <p><strong>氣壓:</strong> ${latestData.pressure} hPa</p>

@@ -24,7 +24,7 @@ const fetchSensorData = async (sensorId: number, limitValue: number = 10) => {
     const responseData = response.data;
     console.log('API response for sensor data:', responseData);
 
-    // 提取 data 字段，并?其存?到 state 中
+    //
     if (responseData && responseData.loadType === 1000) {
       state.sensorData[sensorId] = responseData.data;
     } else {

@@ -21,7 +21,7 @@
           </template>
           <el-menu-item v-for="(sensor, index) in sensorStore.state.sensors" :key="sensor.id"
             @click="selectSensor(sensorStore.state.sensors[index] as Sensor)">
-            {{ sensor.name }}
+            {{ sensor.dev_addr }}
           </el-menu-item>
         </el-sub-menu>
 
