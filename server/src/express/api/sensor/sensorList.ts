@@ -25,7 +25,7 @@ export async function execute(req: Request, res: Response, config: ApiConfig, db
     try {
         const query = `
             SELECT 
-                id, dev_addr, gps_longitude, gps_latitude, battery, is_fire, last_firetime, created_at, last_refresh
+                id, dev_addr, gps_longitude, gps_latitude, battery, is_fire, last_firetime, description, created_at, last_refresh
             FROM Sensor;
         `;
         result = await db.query(query);

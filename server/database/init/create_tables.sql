@@ -21,6 +21,7 @@ CREATE TABLE `Sensor` (
   `battery` INT DEFAULT NULL,
   `is_fire` TINYINT NOT NULL DEFAULT 0,
   `last_firetime` TIMESTAMP DEFAULT NULL,
+  `description` VARCHAR(128) NOT NULL DEFAULT '',
   `created_at` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
   `last_refresh` TIMESTAMP NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`)
@@ -65,6 +66,7 @@ CREATE TABLE `SensorData` (
   `humidity` FLOAT DEFAULT NULL,
   `pressure` FLOAT DEFAULT NULL,
   `gas_resistance` FLOAT DEFAULT NULL,
+  `is_fire` TINYINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `SensorData_FK` (`sensor_id`),
   CONSTRAINT `SensorData_FK` FOREIGN KEY (`sensor_id`) REFERENCES `Sensor` (`id`) ON DELETE CASCADE
@@ -73,25 +75,26 @@ CREATE TABLE `SensorData` (
 
 DELIMITER //
 
-CREATE PROCEDURE AddSensorData(
-  IN mac_addr VARCHAR(16),
-  IN temperature FLOAT,
-  IN humidity FLOAT,
-  IN pressure FLOAT,
-  IN gas_resistance FLOAT,
-  IN battery INT
+CREATE PROCEDURE AddSensorData (
+  IN p_mac_addr VARCHAR(16),
+  IN p_temperature FLOAT,
+  IN p_humidity FLOAT,
+  IN p_pressure FLOAT,
+  IN p_gas_resistance FLOAT,
+  IN p_is_fire TINYINT,
+  IN p_battery INT
 )
 BEGIN
-  DECLARE sensor_id INT;
+  DECLARE v_sensor_id INT;
 
   -- 獲取 sensor_id
-  SELECT id INTO sensor_id FROM Sensor WHERE dev_addr = mac_addr;
+  SELECT id INTO v_sensor_id FROM Sensor WHERE dev_addr = p_mac_addr;
 
   -- 插入 SensorData
   INSERT INTO 
-    SensorData (sensor_id, temperature, humidity, pressure, gas_resistance)
+    SensorData (sensor_id, temperature, humidity, pressure, gas_resistance, is_fire)
   VALUES 
-    (sensor_id, temperature, humidity, pressure, gas_resistance);
+    (v_sensor_id, p_temperature, p_humidity, p_pressure, p_gas_resistance, p_is_fire);
 
   -- 刷新 Sensor 的 battery, last_refresh 值
   UPDATE 
@@ -100,7 +103,7 @@ BEGIN
     battery = battery, 
     last_refresh = CURRENT_TIMESTAMP()
   WHERE 
-    id = sensor_id;
+    id = v_sensor_id;
   
 END //
 
