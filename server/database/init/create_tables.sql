@@ -20,7 +20,7 @@ CREATE TABLE `Sensor` (
   `gps_latitude` DECIMAL(10, 8),
   `battery` INT DEFAULT NULL,
   `is_fire` TINYINT NOT NULL DEFAULT 0,
-  `last_firetime` TIMESTAMP DEFAULT NULL,
+  `last_firetime` TIMESTAMP DEFAULT NULL NULL,
   `description` VARCHAR(128) NOT NULL DEFAULT '',
   `created_at` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
   `last_refresh` TIMESTAMP NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
