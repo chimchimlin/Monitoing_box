@@ -1,14 +1,12 @@
 import { reactive, ref, watch } from 'vue';
 import axios from 'axios';
 import { LoadType } from '@/@types/Response.types';
-import type { AxiosResponse } from 'axios';
-import type { ResultData } from '@/@types/Response.types';
 
 export interface Sensor {
   id: number;
   name: string;
-  dev_addr: string; 
-  description: string;  // 保留 description 欄位
+  dev_addr: string;
+  description: string;
   latitude: number;
   longitude: number;
   is_fire: boolean;
@@ -20,7 +18,9 @@ const state = reactive({
 });
 
 const currentSensor = ref<Sensor | null>(null);
+let refreshTimer: NodeJS.Timeout | null = null;
 
+// 獲取感測器列表
 const fetchSensors = async () => {
   try {
     const response = await axios.get('/api/sensor/sensorList');
@@ -29,9 +29,9 @@ const fetchSensors = async () => {
     if (responseData && Array.isArray(responseData.data)) {
       state.sensors = responseData.data.map((sensor: any) => ({
         id: sensor.id,
-        name: sensor.description || 'Unknown',  // description 作為顯示名稱
-        dev_addr:sensor.dev_addr,
-        description: sensor.description || '',   // 保存原始 description
+        name: sensor.description || 'Unknown',
+        dev_addr: sensor.dev_addr,
+        description: sensor.description || '',
         latitude: parseFloat(sensor.gps_latitude) || 0,
         longitude: parseFloat(sensor.gps_longitude) || 0,
         is_fire: sensor.is_fire || false,
@@ -44,13 +44,14 @@ const fetchSensors = async () => {
         updateCurrentSensor();
       }
     } else {
-      console.error('API response data is not an array:', responseData.data);
+      console.error('API 回應資料不是陣列:', responseData.data);
     }
   } catch (error) {
-    console.error('Error fetching sensors:', error);
+    console.error('獲取感測器列表失敗:', error);
     throw error;
   }
 };
+
 
 const setCurrentSensorById = (id: number) => {
   const foundSensor = state.sensors.find(sensor => sensor.id === id);
@@ -105,6 +106,27 @@ const turnOffAlarm = async (sensorId: number) => {
   }
 };
 
+// 開始自動更新
+const startAutoRefresh = (interval: number = 10000) => {
+  // 如果已經有計時器在運行，先清除它
+  if (refreshTimer) {
+    clearInterval(refreshTimer);
+  }
+  
+  // 設定新的計時器
+  refreshTimer = setInterval(async () => {
+    await fetchSensors();
+  }, interval);
+};
+
+// 停止自動更新
+const stopAutoRefresh = () => {
+  if (refreshTimer) {
+    clearInterval(refreshTimer);
+    refreshTimer = null;
+  }
+};
+
 watch(() => state.sensors, (newSensors) => {
   console.log('Sensors updated:', newSensors);
   updateCurrentSensor();
@@ -117,5 +139,7 @@ export default {
   setCurrentSensorById,
   resetSensorData,
   turnOffAlarm,
-  updateCurrentSensor
+  updateCurrentSensor,
+  startAutoRefresh,  // 導出新增的方法
+  stopAutoRefresh    // 導出新增的方法
 };

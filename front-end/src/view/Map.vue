@@ -11,17 +11,15 @@
         </template>
 
         <ul v-if="fireSensors.length > 0" class="fire-alert-list">
-          <li v-for="sensor in fireSensors" :key="sensor.dev_addr">{{ sensor.dev_addr }}</li>
+          <li v-for="sensor in fireSensors" :key="sensor.id">{{ sensor.dev_addr }}</li>
         </ul>
-
       </el-card>
     </el-main>
   </el-container>
 </template>
 
-
-<script setup lang="ts" >
-import { ref, onMounted, watch, computed } from 'vue';
+<script setup lang="ts">
+import { ref, onMounted, watch, computed, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import L from 'leaflet';
 import sensorStore from '../stores/sensorStore';
@@ -31,8 +29,9 @@ import type { Sensor } from '../stores/sensorStore';
 const router = useRouter();
 let map: L.Map;
 const isMapInitialized = ref(false);
+const updateInterval = 10000; // 更新間隔，預設 10 秒
 
-// 定義正常狀態和火災狀態的圖標
+// 定義圖標（保持不變）...
 const normalIcon = new L.Icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -51,16 +50,11 @@ const fireIcon = new L.Icon({
   shadowSize: [41, 41]
 });
 
-const selectSensor = (sensor: Sensor) => {
-  console.log('選擇感測器：', sensor.name);
-  router.push(`/Sensor/${sensor.id}`);
-};
-
 const fireSensors = computed(() => {
-  console.log('Computing fire sensors:', sensorStore.state.sensors.filter(sensor => sensor.is_fire));
   return sensorStore.state.sensors.filter(sensor => sensor.is_fire);
 });
 
+// 初始化地圖
 const initializeMap = () => {
   if (map) return;
 
@@ -74,22 +68,21 @@ const initializeMap = () => {
   isMapInitialized.value = true;
 };
 
+// 更新標記
 const addMarkers = async () => {
   if (!map) return;
 
+  // 清除現有標記
   map.eachLayer(layer => {
     if (layer instanceof L.Marker) {
       map.removeLayer(layer);
     }
   });
 
-  console.log('Adding markers:', sensorStore.state.sensors);
-
   if (Array.isArray(sensorStore.state.sensors)) {
     for (const sensor of sensorStore.state.sensors) {
-      console.log(`Adding marker at: ${sensor.latitude}, ${sensor.longitude}, is_fire: ${sensor.is_fire}`);
-
-      await sensorDataStore.fetchSensorData(sensor.id, 1);
+      // 使用增量更新獲取最新數據
+      await sensorDataStore.fetchSensorData(sensor.id, 1, true);
       const latestData = sensorDataStore.state.sensorData[sensor.id]?.[0];
 
       const fireStatusStyle = sensor.is_fire
@@ -108,37 +101,37 @@ const addMarkers = async () => {
             <p><strong>火災狀態:</strong> <span style="${fireStatusStyle}">${sensor.is_fire ? '警報中' : '正常'}</span></p>
           </div>
         `
-        : `Sensor: ${sensor.name}<br>目前無數據`;
+        : `Sensor: ${sensor.dev_addr}<br>目前無數據`;
 
-      // 根據火災狀態選擇圖標
       const icon = sensor.is_fire ? fireIcon : normalIcon;
 
-      const marker = L.marker([sensor.latitude, sensor.longitude], { icon: icon }).addTo(map)
+      const marker = L.marker([sensor.latitude, sensor.longitude], { icon: icon })
+        .addTo(map)
         .bindPopup(popupContent);
 
       marker.on('mouseover', () => marker.openPopup());
       marker.on('mouseout', () => marker.closePopup());
       marker.on('click', () => router.push(`/Sensor/${sensor.id}`));
     }
-  } else {
-    console.error('sensorStore.state.sensors is not an array:', sensorStore.state.sensors);
   }
 };
 
-const handleOpen = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath);
-};
-
-const handleClose = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath);
-};
-
+// 生命週期鉤子
 onMounted(async () => {
   console.log('Map component mounted');
   await sensorStore.fetchSensors();
   initializeMap();
+  
+  // 啟動自動更新
+  sensorStore.startAutoRefresh(updateInterval);
 });
 
+onUnmounted(() => {
+  // 停止自動更新
+  sensorStore.stopAutoRefresh();
+});
+
+// 監聽感測器狀態變化
 watch(
   () => sensorStore.state.sensors,
   () => {
@@ -150,6 +143,7 @@ watch(
 </script>
 
 <style>
+/* 樣式保持不變 */
 @import 'leaflet/dist/leaflet.css';
 
 .fire-sensors-control {
@@ -168,7 +162,6 @@ watch(
 
 .fire-alert-title {
   color: #f56c6c;
-  /* 使用 Element UI 的红色 */
   font-weight: bold;
 }
 

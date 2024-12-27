@@ -140,13 +140,13 @@ watch(() => route.params.id, (newId) => {
   }
 }, { immediate: true });
 
-//定時器函数
+//定时器函数
 const createSmartTimer = (id: number) => {
   let timeoutId: NodeJS.Timeout | null = null;
 
   const scheduleNextUpdate = () => {
     
-    const RefreshTime = 5000 ; //固定5秒
+    const RefreshTime = 10000 ; //固定10秒
     
     timeoutId = setTimeout(async () => {
       await fetchSensorData(id, { incremental: true });

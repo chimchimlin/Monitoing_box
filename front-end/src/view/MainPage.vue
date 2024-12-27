@@ -21,20 +21,11 @@
           </template>
           <el-menu-item v-for="(sensor, index) in sensorStore.state.sensors" :key="sensor.id"
             @click="selectSensor(sensorStore.state.sensors[index] as Sensor)">
-            {{ sensor.dev_addr }}
+            {{ sensor.name }}
           </el-menu-item>
         </el-sub-menu>
 
-        <el-sub-menu index="3">
-          <template #title>
-            <el-icon>
-              <location />
-            </el-icon>
-            <span>設定</span>
-          </template>
-          <el-menu-item index="4-1">管理員</el-menu-item>
-          <el-menu-item index="4-2">版本</el-menu-item>
-        </el-sub-menu>
+
 
         <el-menu-item index="4">
           <el-icon>

@@ -40,7 +40,7 @@
           </el-row>
           <el-row v-if="currentSensor.is_fire">
             <el-col :span="24">
-              <p><strong>發生時間：</strong>{{ currentSensor.last_firetime ? formatDateTime(currentSensor.last_firetime) : '無資料' }}</p>
+              <p><strong>發生時間：</strong>{{ formatDateTime(currentSensor.last_firetime)  }}</p>
             </el-col>
           </el-row>
           <el-row v-if="currentSensor.is_fire">
@@ -170,6 +170,7 @@ onMounted(async () => {
     isLoading.value = false;
   }
 });
+
 
 // 路由變化
 watch(() => route.params.id, (newId) => {
