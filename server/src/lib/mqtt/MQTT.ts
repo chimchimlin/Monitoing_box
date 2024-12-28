@@ -1,7 +1,8 @@
 import { setTimeout } from 'timers/promises';
 import * as mqtt from 'mqtt';
-import { getFormatTime } from '../../util/getFormatTime.js';
+import { getFormatTime, getLogFormatTime } from '../../util/getFormatTime.js';
 
+import type { Bot } from '../discord/Bot.js';
 import type { Database } from '../database/Maria.js';
 import type { MQTTConfig } from '../../@types/Config.types.js';
 
@@ -34,10 +35,12 @@ export class MQTT {
     #topic: string;
     #options: mqtt.IClientOptions;
     #client!: mqtt.MqttClient;
+    #bot: Bot | null;
     #db: Database;
 
 
-    constructor(config: MQTTConfig, db: Database) {
+    constructor(config: MQTTConfig, db: Database, bot: Bot | null) {
+        this.#bot = bot;
         this.#mqtt = mqtt;
         this.#topic = config.topic
         this.#options = config.options
@@ -55,10 +58,10 @@ export class MQTT {
         this.#client.on('connect', () => {
             this.#client.subscribe(this.#topic, (err) => {
                 if (err) {
-                    console.log(getFormatTime(), '[MQTT] Failed to subscribe to topic:', err);
+                    console.log(getLogFormatTime(), '[MQTT] Failed to subscribe to topic:', err);
                 }
                 else {
-                    console.log(getFormatTime(), `[MQTT] Subscribed to topic: ${this.#topic}`);
+                    console.log(getLogFormatTime(), `[MQTT] Subscribed to topic: ${this.#topic}`);
                 }
             });
         });
@@ -66,12 +69,12 @@ export class MQTT {
         this.#client.on('message', async (topic, message) => {
             const receivedData = JSON.parse(message.toString())[0] as MQTTData;
 
-            // console.log(getFormatTime(), `[MQTT] Received message from ${topic}: `, JSON.parse(message.toString())[0]);
-            console.log(getFormatTime(), `[MQTT] Received data from ${topic}: `, message.toString());
+            // console.log(getLogFormatTime(), `[MQTT] Received message from ${topic}: `, JSON.parse(message.toString())[0]);
+            console.log(getLogFormatTime(), `[MQTT] Received data from ${topic}: `, message.toString());
 
 
             const sensorDataArray = this.#hexToFloatArray(receivedData.data);
-            console.log(getFormatTime(), '[MQTT] sensorDataArray', receivedData.data, sensorDataArray);
+            console.log(getLogFormatTime(), '[MQTT] sensorDataArray', receivedData.data, sensorDataArray);
 
             // Check data length valid
             if (!sensorDataArray) {
@@ -136,24 +139,29 @@ export class MQTT {
             if (sensorData.is_fire) {
                 try {
                     // 根據 macAddr 獲取 sensorId
-                    const query = `SELECT id FROM Sensor WHERE dev_addr = "${receivedData.macAddr}";`;
+                    const query = `SELECT id, description FROM Sensor WHERE dev_addr = "${receivedData.macAddr}";`;
                     const result = await this.#db.query(query);
+
                     const sensorId = result.length > 0 ? (result[0] as any).id : null;
+                    const sensorName = result.length > 0 ? (result[0] as any).description : '感測器';
 
                     if (sensorId) {
                         // 設置火災狀態
                         const callQuery = `CALL SetSensorOnFire(${sensorId});`;
                         await this.#db.query(callQuery);
-                        console.log(getFormatTime(), `[MQTT] Fire detected for sensor ${receivedData.macAddr}`);
+
+                        if (this.#bot) await this.#bot.sendMessage(receivedData.macAddr, sensorName, getFormatTime());
+
+                        console.log(getLogFormatTime(), `[MQTT] Fire detected for sensor ${receivedData.macAddr}`);
                     }
                 } catch (error) {
-                    console.log(getFormatTime(), `[MQTT] Fire to setup fire notification on sensor ${receivedData.macAddr}`, error);
+                    console.log(getLogFormatTime(), `[MQTT] Fire to setup fire notification on sensor ${receivedData.macAddr}`, error);
                 }
             }
         });
 
         this.#client.on('error', (err) => {
-            console.log(getFormatTime(), '[MQTT] Connection error:', err);
+            console.log(getLogFormatTime(), '[MQTT] Connection error:', err);
         });
     }
 
@@ -164,7 +172,7 @@ export class MQTT {
      */
     #hexToFloatArray(hex: string) {
         if (hex.length !== SENSOR_DATA_ARRAY_LENGTH * 2) {
-            console.log(getFormatTime(), `[MQTT] [error] Hex string length error`, hex);
+            console.log(getLogFormatTime(), `[MQTT] [error] Hex string length error`, hex);
             return false;
         }
 

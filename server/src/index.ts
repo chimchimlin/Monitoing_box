@@ -1,5 +1,5 @@
 import { Controller } from "./Controller.js";
-import { getFormatTime } from "./util/getFormatTime.js";
+import { getLogFormatTime } from "./util/getFormatTime.js";
 
 
 const controller = new Controller();
@@ -7,34 +7,34 @@ const controller = new Controller();
 
 const startApp = async () => {
     controller.app?.on('debug', (msg: any) => {
-        console.log(getFormatTime(), '[api][debug]', msg);
+        console.log(getLogFormatTime(), '[api][debug]', msg);
     });
 
     controller.app?.on('request', (req: any) => {
         const ip = req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || req.ip;
 
         if (Object.keys(req.body).length === 0) {
-            console.log(getFormatTime(), '[api][request]', ip, req.url);
+            console.log(getLogFormatTime(), '[api][request]', ip, req.url);
         }
         else {
-            console.log(getFormatTime(), '[api][request]', ip, req.url, req.body);
+            console.log(getLogFormatTime(), '[api][request]', ip, req.url, req.body);
         }
     });
 
     controller.app?.on('requestFail', (ip: string, failType: 'UNAUTHORIZED' | 'FORBIDDEN', path: string) => {
-        console.log(getFormatTime(), '[api][requestFail]', ip, failType, path);
+        console.log(getLogFormatTime(), '[api][requestFail]', ip, failType, path);
     });
 
     controller.app?.on('response', (res: any) => {
-        //console.log(getFormatTime(),'[api][response]', res);
+        //console.log(getLogFormatTime(),'[api][response]', res);
     });
 
     controller.app?.on('error', (msg: any) => {
-        console.log(getFormatTime(), color.red, msg, color.white);
+        console.log(getLogFormatTime(), color.red, msg, color.white);
     });
 
     controller.app?.on('warn', (msg: any) => {
-        console.log(getFormatTime(), color.yellow, msg, color.white);
+        console.log(getLogFormatTime(), color.yellow, msg, color.white);
     });
 
 
@@ -58,9 +58,10 @@ const main = async () => {
     const sucess = await controller.ininMQTT();
 
     if (!sucess) {
-        console.log(getFormatTime(), '[MQTT] MQTT client not enabled');
+        console.log(getLogFormatTime(), '[MQTT] MQTT client not enabled');
     }
 
+    await controller.initBot();
     await startApp();
 }
 

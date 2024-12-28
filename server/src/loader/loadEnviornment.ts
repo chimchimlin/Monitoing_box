@@ -17,7 +17,8 @@ const loadEnviornment = (): EnvConfig => {
         smtpConfig: {
             user: '',
             password: ''
-        }
+        },
+        botToken: ''
     };
 
     // Load salt
@@ -43,6 +44,8 @@ const loadEnviornment = (): EnvConfig => {
         user: process.env.SMTP_USER ?? '',
         password: process.env.SMTP_PASSWORD ?? ''
     };
+
+    defaultEnv.botToken = process.env.BOT_TOKEN ?? '';
 
     // console.log('defaultEnv', defaultEnv);
     return defaultEnv;

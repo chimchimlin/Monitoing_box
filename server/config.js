@@ -15,16 +15,22 @@
  * @property {number} IPBlocker.cleanupInterval - 定時清理器時間(ms) (default: 5 minutes)
  * 
  * @property {object} mqttConfig - MQTT config
- * @property {string} topic - 要訂閱的主題
+ * @property {string} mqttConfig.topic - 要訂閱的主題
  * @property {mqtt.IClientOptions} options - MQTT 連接選項
  * 
+ * @property {object} botConfig - Discord bot config
+ * @property {string} botConfig.channelId - 發送火災通知的頻道 ID
+ * @property {string} botConfig.status - Bot 狀態 ('online' | 'idle' | 'dnd')
+ * @property {string} botConfig.embedsColor - Bot embed message color
+ * @property {string} botConfig.webUrl - web 管理頁面連結，顯示於火災通知
  */
 const config = {
     apiConfig: {
         host: '0.0.0.0',
         port: 4000,
         enableModule: {
-            mqtt: true
+            mqtt: true,
+            dcbot: true
         }
     },
     ipBlocker: {
@@ -45,6 +51,13 @@ const config = {
                 }
             ]
         }
+    },
+    botConfig: {
+        channelId: '',
+        status: 'online',         // 'online' | 'idle' | 'dnd'
+        playing: '森林火災感測',
+        embedsColor: '#FFFFFF',
+        webUrl: 'http://localhost:5173/'
     }
 };
 

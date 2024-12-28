@@ -1,10 +1,13 @@
+import type { ClientPresenceStatus, HexColorString } from "discord.js";
+
 /**
  * Server config
  */
 export type Config = {
     apiConfig: ApiConfig;
-    ipBlocker: IPBlockerConfig
-    mqttConfig: MQTTConfig
+    ipBlocker: IPBlockerConfig;
+    mqttConfig: MQTTConfig;
+    botConfig: BotConfig;
 }
 
 /**
@@ -13,12 +16,14 @@ export type Config = {
  * @property {number} port - port
  * @property {object} enableModule - 是否啟用子模塊
  * @property {object} enableModule.mqtt - 是否啟用 MQTT client 接收 LoRaWAN gateway 資料
+ * @property {object} enableModule.dcbot - 是否啟用 Discord bot 發送火災通知
  */
 export type ApiConfig = {
     host: string;
     port: number;
     enableModule: {
         mqtt: boolean;
+        dcbot: boolean;
     }
 }
 
@@ -53,6 +58,14 @@ export type MQTTConfig = {
     }
 }
 
+export type BotConfig = {
+    channelId: string;
+    status: ClientPresenceStatus;
+    playing: string;
+    embedsColor: HexColorString;
+    webUrl: string;
+}
+
 
 
 
@@ -63,6 +76,7 @@ export interface EnvConfig {
     salt: string;
     dbConfig: DBConfig;
     smtpConfig: SmtpConfig;
+    botToken: string;
 }
 
 /**
