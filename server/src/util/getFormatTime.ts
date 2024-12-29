@@ -36,7 +36,7 @@ const getFormatTime = (): string => {
         return formattedTime + ` ${period}`;
     }
 
-    return '[' + formattedTime + ']';
+    return formattedTime;
 };
 
 const getLogFormatTime = (): string => {

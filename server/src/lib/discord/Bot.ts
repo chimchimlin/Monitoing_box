@@ -7,6 +7,7 @@ import {
     TextChannel
 } from 'discord.js';
 import type { BotConfig } from '../../@types/Config.types.js';
+import { getFormatTime } from '../../util/getFormatTime.js';
 
 
 export class Bot {
@@ -75,7 +76,7 @@ export class Bot {
                 .setColor(this.embedsColor)
                 .setTitle(`🔥 火災通知`)
                 .setDescription(`網頁管理介面: ${this.webUrl} \n━━━━━━━━━━━━━━━━━━━━━━━━━━━━`)
-                .addFields({ name: `${sensorName} (${dev_addr})`, value: `發生時間時間: ${timeString}` })
+                .addFields({ name: `${sensorName} (${dev_addr})`, value: `發生時間: ${timeString}` })
                 .setTimestamp();
 
 
