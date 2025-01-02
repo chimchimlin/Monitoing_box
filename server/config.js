@@ -56,7 +56,7 @@ const config = {
         channelId: '',
         status: 'online',         // 'online' | 'idle' | 'dnd'
         playing: '森林火災感測',
-        embedsColor: '#FFFFFF',
+        embedsColor: '#ED4337',
         webUrl: 'http://localhost:5173/'
     }
 };
