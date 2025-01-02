@@ -30,6 +30,11 @@ export type MQTTData = {
  */
 const SENSOR_DATA_ARRAY_LENGTH = 18;
 
+/**
+ * Discord bot 消息重發時間間隔 (ms)
+ */
+const FIRE_ALERT_COOLDOWN = 5 * 60 * 1000;
+
 export class MQTT {
     #mqtt;
     #topic: string;
@@ -37,6 +42,7 @@ export class MQTT {
     #client!: mqtt.MqttClient;
     #bot: Bot | null;
     #db: Database;
+    #notificationTimestamps: Map<string, number>;
 
 
     constructor(config: MQTTConfig, db: Database, bot: Bot | null) {
@@ -45,6 +51,8 @@ export class MQTT {
         this.#topic = config.topic
         this.#options = config.options
         this.#db = db;
+
+        this.#notificationTimestamps = new Map();
     }
 
 
@@ -139,6 +147,14 @@ export class MQTT {
             if (sensorData.is_fire) {
                 try {
                     // 根據 macAddr 獲取 sensorId
+                    const currentTime = Date.now();
+                    const lastNotificationTime = this.#notificationTimestamps.get(receivedData.macAddr) || 0;
+
+                    if (currentTime - lastNotificationTime < FIRE_ALERT_COOLDOWN) {
+                        console.log(getLogFormatTime(), `[MQTT] Fire notification for ${receivedData.macAddr} suppressed.`);
+                        return;
+                    }
+
                     const query = `SELECT id, description FROM Sensor WHERE dev_addr = "${receivedData.macAddr}";`;
                     const result = await this.#db.query(query);
 
@@ -150,7 +166,10 @@ export class MQTT {
                         const callQuery = `CALL SetSensorOnFire(${sensorId});`;
                         await this.#db.query(callQuery);
 
-                        if (this.#bot) await this.#bot.sendMessage(receivedData.macAddr, sensorName, getFormatTime());
+                        if (this.#bot) {
+                            await this.#bot.sendMessage(receivedData.macAddr, sensorName, getFormatTime());
+                            this.#notificationTimestamps.set(receivedData.macAddr, currentTime);
+                        }
 
                         console.log(getLogFormatTime(), `[MQTT] Fire detected for sensor ${receivedData.macAddr}`);
                     }
