@@ -4,31 +4,24 @@
     <el-form-item 
       label="DEV Address:" 
       prop="dev_addr" 
-      required
-      :rules="[{ required: true, message: '請輸入 DEV Address' }]"
     >
       <el-input v-model="sensorData.dev_addr" />
     </el-form-item>
     <el-form-item 
       label="感測器名稱:" 
       prop="description"
-      :rules="[{ required: true, message: '請輸入感測器名稱' }]"
     >
       <el-input v-model="sensorData.description" placeholder="請輸入名稱"/>
     </el-form-item>
     <el-form-item 
       label="GPS 經度:" 
       prop="gps_longitude" 
-      required
-      :rules="[{ required: true, message: '請輸入 GPS 經度' }]"
     >
       <el-input v-model="sensorData.gps_longitude" />
     </el-form-item>
     <el-form-item 
       label="GPS 緯度:" 
       prop="gps_latitude" 
-      required
-      :rules="[{ required: true, message: '請輸入 GPS 緯度' }]"
     >
       <el-input v-model="sensorData.gps_latitude" />
     </el-form-item>

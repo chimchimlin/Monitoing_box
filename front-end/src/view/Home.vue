@@ -13,7 +13,7 @@
         <el-col :span="12" style="text-align: right;">
           <el-dropdown @command="handleCommand">
             <el-button type="primary">
-              感測器
+              設定
             </el-button>
             <template #dropdown> 
               <el-dropdown-menu>
@@ -23,7 +23,7 @@
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-          <el-button type="primary" @click="goToMap" icon="el-icon-map-location">地圖</el-button>
+          <el-button span="12" style="text-align: center;" type="primary" @click="goToMap">地圖</el-button>
         </el-col>
       </el-row>
     </el-header>
@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import SensorChart from './SensorChart.vue';
 import SensorList from '../components/data/SensorList.vue';
@@ -91,8 +91,9 @@ const isModalOpen = ref(false);
 const currentModalComponent = ref<any>(null);
 const isLoading = ref(true);
 const error = ref<string | null>(null);
+const updateInterval = 5000; // 更新間隔，5秒
 
-// 添加 編輯 刪除
+// 計算屬性
 const modalTitle = computed(() => {
   switch (currentModalComponent.value) {
     case AddSensor:
@@ -109,10 +110,9 @@ const modalTitle = computed(() => {
 const sensors = computed(() => sensorStore.state.sensors);
 const currentSensor = computed(() => sensorStore.currentSensor.value);
 
-
-
+// 事件處理
 const handleCommand = (command: string) => {
-  console.log('Command:', command); 
+  console.log('Command:', command);
   switch (command) {
     case 'add':
       currentModalComponent.value = AddSensor;
@@ -124,8 +124,7 @@ const handleCommand = (command: string) => {
       currentModalComponent.value = DeleteSensor;
       break;
   }
-  console.log('Current modal component:', currentModalComponent.value); 
-  isModalOpen.value = true; 
+  isModalOpen.value = true;
 };
 
 const closeModal = () => {
@@ -149,12 +148,13 @@ const formatDateTime = (dateTime: string) => {
   return new Date(dateTime).toLocaleString();
 };
 
-const onSensorSelected = (sensorId: number) => {
+const onSensorSelected = async (sensorId: number) => {
   sensorStore.resetSensorData(); // 清空之前的感測器資料
-  sensorStore.setCurrentSensorById(sensorId); // 設定新的感測器
+  await sensorStore.setCurrentSensorById(sensorId); // 設定新的感測器
   router.push(`/Sensor/${sensorId}`); // 導向新的感測器頁面
 };
-// 生命周期
+
+// 生命週期鉤子
 onMounted(async () => {
   try {
     await sensorStore.fetchSensors();
@@ -163,31 +163,43 @@ onMounted(async () => {
     // 檢查路由參數中是否有感測器ID
     const sensorId = parseInt(route.params.id as string);
     if (!isNaN(sensorId)) {
-      sensorStore.setCurrentSensorById(sensorId);
+      await sensorStore.setCurrentSensorById(sensorId);
     }
+
+    // 開始自動更新
+    sensorStore.startAutoRefresh(updateInterval);
   } catch (e) {
     error.value = "無法加載感測器數據";
     isLoading.value = false;
   }
 });
 
+onUnmounted(() => {
+  // 組件卸載時停止自動更新
+  sensorStore.stopAutoRefresh();
+});
 
-// 路由變化
-watch(() => route.params.id, (newId) => {
+// 路由監聽
+watch(() => route.params.id, async (newId) => {
   const sensorId = parseInt(newId as string);
   if (!isNaN(sensorId)) {
-    sensorStore.setCurrentSensorById(sensorId);
+    await sensorStore.setCurrentSensorById(sensorId);
   }
 });
 
-//監看 選擇感測器 的變化
-watch(() => sensorStore.currentSensor, (newSensor) => {
-  if (newSensor) {
-    console.log('Current sensor updated:', newSensor.value?.name);
-  } else {
-    console.log('No sensor selected');
+// 監聽火災狀態變化
+watch(() => currentSensor.value?.is_fire, (newFireStatus, oldFireStatus) => {
+  if (newFireStatus !== oldFireStatus) {
+    console.log(`火災狀態更新: ${newFireStatus ? '發生火災' : '正常'}`);
   }
 });
+
+// 監聽感測器更新
+watch(() => sensorStore.currentSensor, (newSensor) => {
+  if (newSensor.value) {
+    console.log('感測器更新:', newSensor.value.name);
+  }
+}, { deep: true });
 </script>
 
 <style scoped>

@@ -1,7 +1,7 @@
 <template>
   <el-form label-width="120px" @submit.prevent="handleSubmit">
     <h2>刪除感測節點</h2>
-    <el-form-item label="感測器名稱:" prop="sensor_name" required>
+    <el-form-item label="感測器名稱:">
       <el-select v-model="selectedSensorName" placeholder="請選擇感測器">
         <el-option
           v-for="sensor in sensorStore.state.sensors"

@@ -1,7 +1,7 @@
 <template>
   <el-form :model="sensorData" label-width="120px" @submit.prevent="handleSubmit">
     <h2>編輯感測節點</h2>
-    <el-form-item label="感測器:" prop="sensor_name" required>
+    <el-form-item label="感測器:" >
       <el-select 
         v-model="selectedSensorName" 
         placeholder="請選擇感測器"
@@ -15,19 +15,19 @@
       />
       </el-select>
     </el-form-item>
-    <el-form-item label="感測器名稱:" prop="description" required>
+    <el-form-item label="感測器名稱:" prop="description" >
       <el-input 
         v-model="sensorData.description" 
         placeholder="請輸入感測器名稱"
       />
     </el-form-item>
-    <el-form-item label="DEV Address:" prop="dev_addr" required>
+    <el-form-item label="DEV Address:" prop="dev_addr" >
       <el-input v-model="sensorData.dev_addr" />
     </el-form-item>
-    <el-form-item label="GPS 經度:" prop="gps_longitude" required>
+    <el-form-item label="GPS 經度:" prop="gps_longitude" >
       <el-input v-model="sensorData.gps_longitude" />
     </el-form-item>
-    <el-form-item label="GPS 緯度:" prop="gps_latitude" required>
+    <el-form-item label="GPS 緯度:" prop="gps_latitude" >
       <el-input v-model="sensorData.gps_latitude" />
     </el-form-item>
     <el-form-item>
