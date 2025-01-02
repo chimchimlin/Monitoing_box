@@ -20,12 +20,12 @@ const dataTypes = [
 
 
 const BATTERY_PERCENT = 85;
-const INTERVAL_TIME = 2 * 1000;    // 10s 發送一次
+const INTERVAL_TIME = 5 * 1000;    // 10s 發送一次
 
 const mqttConfig = {
-    brokerUrl: 'mqtt://140.127.196.39:18883',
-    username: 'iot2024',
-    password: 'isuCSIE2024#',
+    brokerUrl: 'mqtt://<host>:<port>',
+    username: 'username',
+    password: 'password',
     topic: 'GIOT-GW/UL/fire-simulation'
 };
 
