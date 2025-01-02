@@ -3,468 +3,546 @@
     "temperature": 29.61,
     "humidity": 47.71,
     "pressure": 1004.53,
-    "gas_resistance": 96.26
+    "gas_resistance": 96.26,
+    "is_fire": 0
   },
   {
     "temperature": 29.69,
     "humidity": 47.45,
     "pressure": 1004.54,
-    "gas_resistance": 108.63
+    "gas_resistance": 108.63,
+    "is_fire": 0
   },
   {
     "temperature": 29.65,
     "humidity": 47.68,
     "pressure": 1004.55,
-    "gas_resistance": 100.6
+    "gas_resistance": 100.6,
+    "is_fire": 0
   },
   {
     "temperature": 29.64,
     "humidity": 47.77,
     "pressure": 1004.56,
-    "gas_resistance": 97.27
+    "gas_resistance": 97.27,
+    "is_fire": 0
   },
   {
     "temperature": 29.72,
     "humidity": 47.51,
     "pressure": 1004.57,
-    "gas_resistance": 109.12
+    "gas_resistance": 109.12,
+    "is_fire": 0
   },
   {
     "temperature": 29.71,
     "humidity": 47.43,
     "pressure": 1004.57,
-    "gas_resistance": 114.1
+    "gas_resistance": 114.1,
+    "is_fire": 0
   },
   {
     "temperature": 29.61,
     "humidity": 47.71,
     "pressure": 1004.53,
-    "gas_resistance": 96.26
+    "gas_resistance": 96.26,
+    "is_fire": 0
   },
   {
     "temperature": 29.69,
     "humidity": 47.45,
     "pressure": 1004.54,
-    "gas_resistance": 108.63
+    "gas_resistance": 108.63,
+    "is_fire": 0
   },
   {
     "temperature": 29.65,
     "humidity": 47.68,
     "pressure": 1004.55,
-    "gas_resistance": 100.6
+    "gas_resistance": 100.6,
+    "is_fire": 0
   },
   {
     "temperature": 29.64,
     "humidity": 47.77,
     "pressure": 1004.56,
-    "gas_resistance": 97.27
+    "gas_resistance": 97.27,
+    "is_fire": 0
   },
   {
     "temperature": 29.72,
     "humidity": 47.51,
     "pressure": 1004.57,
-    "gas_resistance": 109.12
+    "gas_resistance": 109.12,
+    "is_fire": 0
   },
   {
     "temperature": 29.71,
     "humidity": 47.43,
     "pressure": 1004.57,
-    "gas_resistance": 114.1
+    "gas_resistance": 114.1,
+    "is_fire": 0
   },
   {
     "temperature": 29.75,
     "humidity": 47.36,
     "pressure": 1004.57,
-    "gas_resistance": 116.81
+    "gas_resistance": 116.81,
+    "is_fire": 0
   },
   {
     "temperature": 29.76,
     "humidity": 47.35,
     "pressure": 1004.56,
-    "gas_resistance": 118.12
+    "gas_resistance": 118.12,
+    "is_fire": 0
   },
   {
     "temperature": 29.64,
     "humidity": 47.75,
     "pressure": 1004.57,
-    "gas_resistance": 102.76
+    "gas_resistance": 102.76,
+    "is_fire": 0
   },
   {
     "temperature": 29.68,
     "humidity": 47.51,
     "pressure": 1004.57,
-    "gas_resistance": 112.72
+    "gas_resistance": 112.72,
+    "is_fire": 0
   },
   {
     "temperature": 29.58,
     "humidity": 47.81,
     "pressure": 1004.58,
-    "gas_resistance": 101.21
+    "gas_resistance": 101.21,
+    "is_fire": 0
   },
   {
     "temperature": 29.63,
     "humidity": 47.56,
     "pressure": 1004.61,
-    "gas_resistance": 111.82
+    "gas_resistance": 111.82,
+    "is_fire": 0
   },
   {
     "temperature": 29.64,
     "humidity": 47.47,
     "pressure": 1004.59,
-    "gas_resistance": 115.52
+    "gas_resistance": 115.52,
+    "is_fire": 0
   },
   {
     "temperature": 29.64,
     "humidity": 47.44,
     "pressure": 1004.6,
-    "gas_resistance": 117.63
+    "gas_resistance": 117.63,
+    "is_fire": 0
   },
   {
     "temperature": 29.52,
     "humidity": 47.82,
     "pressure": 1004.62,
-    "gas_resistance": 103.2
+    "gas_resistance": 103.2,
+    "is_fire": 0
   },
   {
     "temperature": 29.58,
     "humidity": 47.62,
     "pressure": 1004.6,
-    "gas_resistance": 113.1
+    "gas_resistance": 113.1,
+    "is_fire": 0
   },
   {
     "temperature": 29.59,
     "humidity": 47.55,
     "pressure": 1004.62,
-    "gas_resistance": 117.38
+    "gas_resistance": 117.38,
+    "is_fire": 0
   },
   {
     "temperature": 29.55,
     "humidity": 47.52,
     "pressure": 1004.62,
-    "gas_resistance": 119.64
+    "gas_resistance": 119.64,
+    "is_fire": 0
   },
   {
     "temperature": 29.56,
     "humidity": 47.53,
     "pressure": 1004.61,
-    "gas_resistance": 121.2
+    "gas_resistance": 121.2,
+    "is_fire": 0
   },
   {
     "temperature": 29.44,
     "humidity": 47.93,
     "pressure": 1004.64,
-    "gas_resistance": 105.54
+    "gas_resistance": 105.54,
+    "is_fire": 0
   },
   {
     "temperature": 29.39,
     "humidity": 48.06,
     "pressure": 1004.65,
-    "gas_resistance": 100.24
+    "gas_resistance": 100.24,
+    "is_fire": 0
   },
   {
     "temperature": 29.45,
     "humidity": 47.83,
     "pressure": 1004.64,
-    "gas_resistance": 112.57
+    "gas_resistance": 112.57,
+    "is_fire": 0
   },
   {
     "temperature": 29.45,
     "humidity": 47.74,
     "pressure": 1004.66,
-    "gas_resistance": 116.56
+    "gas_resistance": 116.56,
+    "is_fire": 0
   },
   {
     "temperature": 29.46,
     "humidity": 47.7,
     "pressure": 1004.65,
-    "gas_resistance": 120.16
+    "gas_resistance": 120.16,
+    "is_fire": 0
   },
   {
     "temperature": 29.5,
     "humidity": 47.7,
     "pressure": 1004.65,
-    "gas_resistance": 120.85
+    "gas_resistance": 120.85,
+    "is_fire": 0
   },
   {
     "temperature": 29.48,
     "humidity": 47.67,
     "pressure": 1004.64,
-    "gas_resistance": 121.64
+    "gas_resistance": 121.64,
+    "is_fire": 0
   },
   {
     "temperature": 29.29,
     "humidity": 49.91,
     "pressure": 1004.67,
-    "gas_resistance": 42.99
+    "gas_resistance": 42.99,
+    "is_fire": 0
   },
   {
     "temperature": 29.48,
     "humidity": 50.1,
     "pressure": 1004.66,
-    "gas_resistance": 25.76
+    "gas_resistance": 25.76,
+    "is_fire": 0
   },
   {
     "temperature": 29.54,
     "humidity": 50.41,
     "pressure": 1004.66,
-    "gas_resistance": 10.61
+    "gas_resistance": 10.61,
+    "is_fire": 0
   },
   {
     "temperature": 29.56,
     "humidity": 50.76,
     "pressure": 1004.65,
-    "gas_resistance": 6.16
+    "gas_resistance": 6.16,
+    "is_fire": 1
   },
   {
     "temperature": 29.59,
     "humidity": 51.16,
     "pressure": 1004.66,
-    "gas_resistance": 4.58
+    "gas_resistance": 4.58,
+    "is_fire": 1
   },
   {
     "temperature": 29.6,
     "humidity": 51.49,
     "pressure": 1004.66,
-    "gas_resistance": 3.99
+    "gas_resistance": 3.99,
+    "is_fire": 1
   },
   {
     "temperature": 29.62,
     "humidity": 51.94,
     "pressure": 1004.67,
-    "gas_resistance": 3.27
+    "gas_resistance": 3.27,
+    "is_fire": 1
   },
   {
     "temperature": 29.55,
     "humidity": 52.18,
     "pressure": 1004.67,
-    "gas_resistance": 2.93
+    "gas_resistance": 2.93,
+    "is_fire": 1
   },
   {
     "temperature": 29.57,
     "humidity": 52.69,
     "pressure": 1004.67,
-    "gas_resistance": 2.36
+    "gas_resistance": 2.36,
+    "is_fire": 1
   },
   {
     "temperature": 29.52,
     "humidity": 52.99,
     "pressure": 1004.67,
-    "gas_resistance": 2.08
+    "gas_resistance": 2.08,
+    "is_fire": 1
   },
   {
     "temperature": 29.55,
     "humidity": 53.47,
     "pressure": 1004.68,
-    "gas_resistance": 1.83
+    "gas_resistance": 1.83,
+    "is_fire": 1
   },
   {
     "temperature": 29.2,
     "humidity": 54.26,
     "pressure": 1004.7,
-    "gas_resistance": 1.23
+    "gas_resistance": 1.23,
+    "is_fire": 1
   },
   {
     "temperature": 29.45,
     "humidity": 54.75,
     "pressure": 1004.68,
-    "gas_resistance": 1.49
+    "gas_resistance": 1.49,
+    "is_fire": 1
   },
   {
     "temperature": 29.51,
     "humidity": 54.92,
     "pressure": 1004.68,
-    "gas_resistance": 1.45
+    "gas_resistance": 1.45,
+    "is_fire": 1
   },
   {
     "temperature": 29.54,
     "humidity": 55.24,
     "pressure": 1004.68,
-    "gas_resistance": 1.36
+    "gas_resistance": 1.36,
+    "is_fire": 1
   },
   {
     "temperature": 29.55,
     "humidity": 55.59,
     "pressure": 1004.68,
-    "gas_resistance": 1.28
+    "gas_resistance": 1.28,
+    "is_fire": 1
   },
   {
     "temperature": 29.56,
     "humidity": 55.96,
     "pressure": 1004.68,
-    "gas_resistance": 1.21
+    "gas_resistance": 1.21,
+    "is_fire": 1
   },
   {
     "temperature": 29.56,
     "humidity": 56.32,
     "pressure": 1004.69,
-    "gas_resistance": 1.16
+    "gas_resistance": 1.16,
+    "is_fire": 1
   },
   {
     "temperature": 29.57,
     "humidity": 56.66,
     "pressure": 1004.68,
-    "gas_resistance": 1.12
+    "gas_resistance": 1.12,
+    "is_fire": 1
   },
   {
     "temperature": 29.57,
     "humidity": 56.96,
     "pressure": 1004.69,
-    "gas_resistance": 1.09
+    "gas_resistance": 1.09,
+    "is_fire": 1
   },
   {
     "temperature": 29.57,
     "humidity": 56.96,
     "pressure": 1004.69,
-    "gas_resistance": 1.09
+    "gas_resistance": 1.09,
+    "is_fire": 1
   },
   {
     "temperature": 29.47,
     "humidity": 57.93,
     "pressure": 1004.69,
-    "gas_resistance": 1
+    "gas_resistance": 1,
+    "is_fire": 1
   },
   {
     "temperature": 29.52,
     "humidity": 58.01,
     "pressure": 1004.71,
-    "gas_resistance": 1
+    "gas_resistance": 1,
+    "is_fire": 1
   },
   {
     "temperature": 29.43,
     "humidity": 58.25,
     "pressure": 1004.68,
-    "gas_resistance": 1
+    "gas_resistance": 1,
+    "is_fire": 1
   },
   {
     "temperature": 29.52,
     "humidity": 58.34,
     "pressure": 1004.7,
-    "gas_resistance": 1
+    "gas_resistance": 1,
+    "is_fire": 1
   },
   {
     "temperature": 29.53,
     "humidity": 58.57,
     "pressure": 1004.69,
-    "gas_resistance": 0.99
+    "gas_resistance": 0.99,
+    "is_fire": 1
   },
   {
     "temperature": 29.55,
     "humidity": 58.78,
     "pressure": 1004.68,
-    "gas_resistance": 0.98
+    "gas_resistance": 0.98,
+    "is_fire": 1
   },
   {
     "temperature": 29.55,
     "humidity": 58.78,
     "pressure": 1004.68,
-    "gas_resistance": 0.98
+    "gas_resistance": 0.98,
+    "is_fire": 1
   },
   {
     "temperature": 29.56,
     "humidity": 59.57,
     "pressure": 1004.72,
-    "gas_resistance": 0.94
+    "gas_resistance": 0.94,
+    "is_fire": 1
   },
   {
     "temperature": 29.5,
     "humidity": 59.81,
     "pressure": 1004.7,
-    "gas_resistance": 0.97
+    "gas_resistance": 0.97,
+    "is_fire": 1
   },
   {
     "temperature": 29.57,
     "humidity": 59.53,
     "pressure": 1004.71,
-    "gas_resistance": 0.99
+    "gas_resistance": 0.99,
+    "is_fire": 1
   },
   {
     "temperature": 29.53,
     "humidity": 59.45,
     "pressure": 1004.71,
-    "gas_resistance": 1.05
+    "gas_resistance": 1.05,
+    "is_fire": 1
   },
   {
     "temperature": 29.61,
     "humidity": 59.07,
     "pressure": 1004.72,
-    "gas_resistance": 1.08
+    "gas_resistance": 1.08,
+    "is_fire": 1
   },
   {
     "temperature": 29.63,
     "humidity": 58.83,
     "pressure": 1004.71,
-    "gas_resistance": 1.11
+    "gas_resistance": 1.11,
+    "is_fire": 1
   },
   {
     "temperature": 29.52,
     "humidity": 59.05,
     "pressure": 1004.72,
-    "gas_resistance": 1.1
+    "gas_resistance": 1.1,
+    "is_fire": 1
   },
   {
     "temperature": 29.57,
     "humidity": 58.67,
     "pressure": 1004.72,
-    "gas_resistance": 1.15
+    "gas_resistance": 1.15,
+    "is_fire": 1
   },
   {
     "temperature": 29.59,
     "humidity": 58.49,
     "pressure": 1004.73,
-    "gas_resistance": 1.17
+    "gas_resistance": 1.17,
+    "is_fire": 1
   },
   {
     "temperature": 29.59,
     "humidity": 58.36,
     "pressure": 1004.74,
-    "gas_resistance": 1.19
+    "gas_resistance": 1.19,
+    "is_fire": 1
   },
   {
     "temperature": 29.59,
     "humidity": 58.25,
     "pressure": 1004.75,
-    "gas_resistance": 1.21
+    "gas_resistance": 1.21,
+    "is_fire": 1
   },
   {
     "temperature": 29.47,
     "humidity": 58.55,
     "pressure": 1004.75,
-    "gas_resistance": 1.19
+    "gas_resistance": 1.19,
+    "is_fire": 1
   },
   {
     "temperature": 29.52,
     "humidity": 58.22,
     "pressure": 1004.76,
-    "gas_resistance": 1.24
+    "gas_resistance": 1.24,
+    "is_fire": 1
   },
   {
     "temperature": 29.54,
     "humidity": 58.04,
     "pressure": 1004.76,
-    "gas_resistance": 1.26
+    "gas_resistance": 1.26,
+    "is_fire": 1
   },
   {
     "temperature": 29.54,
     "humidity": 57.92,
     "pressure": 1004.77,
-    "gas_resistance": 1.27
+    "gas_resistance": 1.27,
+    "is_fire": 1
   },
   {
     "temperature": 29.54,
     "humidity": 57.83,
     "pressure": 1004.77,
-    "gas_resistance": 1.29
+    "gas_resistance": 1.29,
+    "is_fire": 1
   },
   {
     "temperature": 29.54,
     "humidity": 57.75,
     "pressure": 1004.79,
-    "gas_resistance": 1.31
+    "gas_resistance": 1.31,
+    "is_fire": 1
   },
   {
     "temperature": 29.16,
     "humidity": 58.14,
     "pressure": 1004.81,
-    "gas_resistance": 0.97
+    "gas_resistance": 0.97,
+    "is_fire": 1
   }
 ]

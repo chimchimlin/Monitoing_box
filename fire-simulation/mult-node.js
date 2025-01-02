@@ -20,19 +20,19 @@ const dataTypes = [
 
 
 const BATTERY_PERCENT = 85;
-const INTERVAL_TIME = 10 * 1000;    // 10s 發送一次
+const INTERVAL_TIME = 2 * 1000;    // 10s 發送一次
 
 const mqttConfig = {
-    brokerUrl: 'mqtt://<host>:<port>',
-    username: 'username',
-    password: 'password',
+    brokerUrl: 'mqtt://140.127.196.39:18883',
+    username: 'iot2024',
+    password: 'isuCSIE2024#',
     topic: 'GIOT-GW/UL/fire-simulation'
 };
 
 
 // 模擬的正常與火災數據
-const normalData =  JSON.parse(fs.readFileSync('./data/normal-data.json', 'utf-8'));
-const fireData =  JSON.parse(fs.readFileSync('./data/fire-data.json', 'utf-8'));
+const normalData = JSON.parse(fs.readFileSync('./data/normal-data.json', 'utf-8'));
+const fireData = JSON.parse(fs.readFileSync('./data/fire-data.json', 'utf-8'));
 
 
 
@@ -76,14 +76,15 @@ mqttClient.on('error', (err) => {
 });
 
 const sendDataToMQTT = (data, devAddr) => {
-    const buffer = new Uint8Array(20);  // 儲存 hex sensor data
+    const buffer = new Uint8Array(18);  // 儲存 hex sensor data
 
     // 轉換數據並填充 buffer
     floatToHex(data.temperature, buffer, 0);        // 轉換溫度
     floatToHex(data.humidity, buffer, 4);           // 轉換濕度
     floatToHex(data.pressure, buffer, 8);           // 轉換氣壓
     floatToHex(data.gas_resistance, buffer, 12);    // 轉換氣體阻抗
-    floatToHex(BATTERY_PERCENT, buffer, 16);        // 轉換電池電量百分比
+    buffer[16] = Number(BATTERY_PERCENT).toString(16);
+    buffer[17] = Number(data.is_fire === 1 ? 1 : 0).toString(16);
 
     // 將 buffer 轉換為 hex string
     const hexString = Array.from(buffer)
@@ -147,7 +148,8 @@ const main = async () => {
             console.log(`Humidity: ${sensorData.humidity},\t Hex: ${getFloatToHex(sensorData.humidity)}`);
             console.log(`Pressure: ${sensorData.pressure},\t Hex: ${getFloatToHex(sensorData.pressure)}`);
             console.log(`Gas Resistance: ${sensorData.gas_resistance},\t Hex: ${getFloatToHex(sensorData.gas_resistance)}`);
-            console.log(`Battery Percent: ${BATTERY_PERCENT},\t Hex: ${getFloatToHex(BATTERY_PERCENT)}`);
+            console.log(`Battery Percent: ${BATTERY_PERCENT},\t Hex: ${Number(BATTERY_PERCENT).toString(16)}`);
+            console.log(`Is fire: ${sensorData.is_fire}`);
             console.log('----------------------------');
 
             currentIndex[idx] = ((currentIndex[idx] + 1) < dataTypes[idx].length) ? (currentIndex[idx] + 1) : (dataTypes[idx].length - 1);
