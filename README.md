@@ -15,7 +15,7 @@
 
 
 <img src="./public/images/3DPrint-1.jpg" width="600px">
-<img src="./public/images/3DPrint-2.jpg" width="600px">
+<img src="./public/images/3DPrint-3.jpg" width="600px">
 <img src="./public/images/sensor-map.png" width="600px">
 <img src="./public/images/sensor-chart.png" width="600px">
 
